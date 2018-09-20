@@ -1,7 +1,7 @@
 from google.appengine.ext import ndb
 
 
-class Event(ndb.Model):
+class Show(ndb.Model):
     event_id = ndb.KeyProperty()
     client_id = ndb.KeyProperty()
     screen_id = ndb.KeyProperty()
