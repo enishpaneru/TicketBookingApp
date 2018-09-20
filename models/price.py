@@ -1,7 +1,7 @@
 from google.appengine.ext import ndb
 
 
-class Event(ndb.Model):
+class Price(ndb.Model):
     show_id = ndb.KeyProperty()
     category_id = ndb.KeyProperty()
     amount = ndb.IntegerProperty()
