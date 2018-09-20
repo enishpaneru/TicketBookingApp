@@ -1,5 +1,6 @@
 from flask.views import MethodView
 from flask import jsonify, request
+from models.event import Event
 
 
 class HelloView(MethodView):
@@ -8,3 +9,9 @@ class HelloView(MethodView):
 
     def post(self):
         return request.data
+
+
+class ListEventView(MethodView):
+    def get(self):
+        query = Event.query().get()
+        return jsonify(query)
