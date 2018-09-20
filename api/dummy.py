@@ -60,15 +60,24 @@ class CategoryView(MethodView):
 
 class ClientView(MethodView):
     def get(self):
-        pass
+        client=ndb.Key('Client', 4855443348258816)
+        data=client.get()
+        print(data)        
+        return str(data)
+        
 
     def post(self):
         client = Client()
-        client.client_name = request.form['client_name']
-        client.client_description = request.form['client_description']
-        client.screen_list_id = request.form['screen_list_id']
-        client.put()
-        return jsonify({'message': "Success"})
+        client.name = request.form['client_name']
+        client.description = request.form['client_description']
+        client.screen_list_id = []
+        res=client.put()
+        if res:
+            return jsonify({'message': "Success", "id": res.id()})
+        else:
+            return jsonify({'error':'error message.'})
+
+
 
 
 class PriceView(MethodView):
@@ -97,14 +106,15 @@ class ScreenView(MethodView):
         screen.max_columns=int(request.form['max_columns'])
         screen.seats=request.form['seats']
         result=screen.put()
-        all_clients=Client.query()
-        for each in all_clients:
-            print each.key
         if result:
             client=screen.client_id.get()
-            print client
-        print(result)
+            print client.screen_list_id.append(result.id())
+            client.put()
         return jsonify({'message':"Success"})
+
+
+    
+
 
 
 
