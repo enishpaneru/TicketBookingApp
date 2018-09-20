@@ -20,10 +20,11 @@ class EventView(MethodView):
         return jsonify({"Success"})
 
     def post(self):
-        event = Event()
-        event.name = request.form['name']
-        event.description = request.form['description']
-        event.active_shows_id = request.form['active_shows_id']
+        event=Event()
+        event.name = ndb.Key('Client',request.form['client_id'])
+        event.name=request.form['name']
+        event.description=request.form['description']
+        event.active_shows_id=request.form['active_shows_id']
         event.put()
         return jsonify({'message': "Success"})
 
@@ -88,12 +89,27 @@ class ScreenView(MethodView):
         pass
 
     def post(self):
-        screen = Screen_Layout()
-        screen.screen_name = request.form['screen_name']
-        screen.client_id = ndb.Key('Client', request.form['client_id'])
-        screen.location = request.form['location']
-        screen.max_rows = int(request.form['max_rows'])
-        screen.max_columns = int(request.form['max_columns'])
-        screen.seats = request.form['seats']
-        screen.put()
-        return jsonify({'message': "Success"})
+        screen=Screen_Layout()
+        screen.screen_name=request.form['screen_name']
+        screen.client_id=ndb.Key('Client',int(request.form['client_id']))
+        screen.location=request.form['location']
+        screen.max_rows=int(request.form['max_rows'])
+        screen.max_columns=int(request.form['max_columns'])
+        screen.seats=request.form['seats']
+        result=screen.put()
+        all_clients=Client.query()
+        for each in all_clients:
+            print each.key
+        if result:
+            client=screen.client_id.get()
+            print client
+        print(result)
+        return jsonify({'message':"Success"})
+
+
+
+
+
+
+
+
