@@ -6,5 +6,3 @@ class Event(ndb.Model):
     description = ndb.StringProperty()
     active_shows_id = ndb.JsonProperty()
 
-def list_events():
-    ndb.hdjhsjdhj
