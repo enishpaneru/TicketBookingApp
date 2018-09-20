@@ -16,7 +16,7 @@ import datetime
 class EventView(MethodView):
     def get(self):
         event=Event()
-        event.name='sadfasdf'
+        event.name='11'
         event.description='adsfasdfasd'
         event.active_shows_id=''
         event.put()

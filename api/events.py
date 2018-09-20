@@ -1,10 +1,10 @@
 from flask.views import MethodView
 from flask import jsonify, request
+from models.event import Event
 
 
-class HelloView(MethodView):
+class ListEventView(MethodView):
     def get(self):
-        return jsonify({'hello': 'world'})
-
-    def post(self):
-        return request.data
+        query = Event.query()
+        return jsonify(
+            [{'event_id': each.key.id(), 'name': each.name, 'description': each.description} for each in query.fetch()])
