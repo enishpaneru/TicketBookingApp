@@ -1,5 +1,4 @@
 from events import ListEventView, ListEventShowView
-from api.dummy import EventView, ShowView
 from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView
 
 
