@@ -3,6 +3,7 @@ from flask.views import MethodView
 from flask import jsonify
 from api.urls import app_add_urls
 
+
 app = Flask(__name__)
 app = app_add_urls(app)
 
@@ -10,6 +11,7 @@ app = app_add_urls(app)
 @app.route('/')
 def form1():
     return render_template('form.html')
+
 
 
 
