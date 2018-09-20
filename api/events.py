@@ -10,14 +10,21 @@ from google.appengine.ext import ndb
 class ListEventView(MethodView):
     def get(self):
         query = Event.query()
-        return jsonify(
-            [{'event_id': each.key.id(), 'name': each.name, 'description': each.description} for each in query.fetch()])
+        events_list = []
+        for each in query.fetch():
+            event_id = each.key.id()
+            name = each.name
+            description = each.description
+            client = each.client_id.get()
+            client_id = client.key.id()
+            client_name = client.name
+            events_list.append({'event_id': event_id, 'name': name, 'description': description, 'client_id': client_id,
+                                'client_name': client_name})
+        return jsonify(events_list)
 
 
 class ListEventShowView(MethodView):
     def get(self, event_id):
-        print "########"
-        print event_id
         query = Show.query(Show.event_id == ndb.Key(Event, event_id))
         shows_list = []
         for each in query.fetch():
@@ -37,3 +44,4 @@ class ListEventShowView(MethodView):
                 {'show_id': show_id, 'client_name': client_name, 'screen_name': screen_name, 'datetime': datetime})
 
         return jsonify(shows_list)
+
