@@ -35,6 +35,8 @@ class EventView(MethodView):
 
 class ShowView(MethodView):
     def get(self):
+        show=ndb.Key('Show', 4785074604081152)
+        return str(show.get().seats)
         pass
 
     def post(self):
@@ -45,7 +47,11 @@ class ShowView(MethodView):
         show.screen_id = ndb.Key('Screen_Layout', int(request.form['screen_id']))
         show.name = request.form['name']
         show.datetime = datetime.datetime.now()
-        show.seats = request.form['seats']
+        screen=ndb.Key('Screen_Layout', int(request.form['screen_id']))
+        seats=screen.get().seats
+        for each in seats:
+            each.append(4)
+        show.seats = seats
         res=show.put()
         return jsonify({'id':res.id(),'message': "Success"})
 
@@ -104,6 +110,8 @@ class PriceView(MethodView):
 
 class ScreenView(MethodView):
     def get(self):
+        screen=ndb.Key('Screen_Layout', 6192449487634432)
+        return str(screen.get().seats)
         pass
 
     def post(self):
@@ -114,7 +122,18 @@ class ScreenView(MethodView):
         screen.location=request.form['location']
         screen.max_rows=int(request.form['max_rows'])
         screen.max_columns=int(request.form['max_columns'])
-        screen.seats=request.form['seats']
+        seats=[]
+        max_rows=int(request.form['max_rows'])
+        max_columns=int(request.form['max_columns'])
+        i=1
+        j=1
+        while (i <= max_rows):
+            while (j<= max_columns):
+                seats.append((i,j))
+                j=j+1
+            j=1
+            i=i+1
+        screen.seats=seats
         result=screen.put()
         if result:
             client=screen.client_id.get()
