@@ -12,30 +12,30 @@ import datetime
 
 class EventView(MethodView):
     def get(self):
-        id=12345
+        id = 12345
         # query = Event.query(Event.key==ndb.Key('Event',1))
         # res=query.fetch()
         # client = res[0].client_id.get()
-        query=Event.query()
-        res=query.fetch()
+        query = Event.query()
+        res = query.fetch()
         for each in res:
             print each.client_id
         return str(0)
 
     def post(self):
-        event=Event()
+        event = Event()
         # event.key = ndb.Key('Event',int(request.form['id']))
-        event.client_id=ndb.Key('Client',int(request.form['client_id']))
-        event.name=request.form['name']
-        event.description=request.form['description']
-        event.duration=int(request.form['duration'])
-        res=event.put()
+        event.client_id = ndb.Key('Client', int(request.form['client_id']))
+        event.name = request.form['name']
+        event.description = request.form['description']
+        event.duration = int(request.form['duration'])
+        res = event.put()
         return jsonify({'id': res.id(), 'message': "Success"})
 
 
 class ShowView(MethodView):
     def get(self):
-        show=ndb.Key('Show', 4785074604081152)
+        show = ndb.Key('Show', 4785074604081152)
         return str(show.get().seats)
         pass
 
@@ -47,13 +47,33 @@ class ShowView(MethodView):
         show.screen_id = ndb.Key('Screen_Layout', int(request.form['screen_id']))
         show.name = request.form['name']
         show.datetime = datetime.datetime.now()
-        screen=ndb.Key('Screen_Layout', int(request.form['screen_id']))
-        seats=screen.get().seats
+        screen = ndb.Key('Screen_Layout', int(request.form['screen_id']))
+        seats = screen.get().seats
+        updated_seats = []
         for each in seats:
-            each.append(4)
-        show.seats = seats
-        res=show.put()
-        return jsonify({'id':res.id(),'message': "Success"})
+            newseat = each
+            newseat['status'] = 4
+            updated_seats.append(newseat)
+        show.seats = updated_seats
+        res = show.put()
+
+        # The below paragraph should be deleted later
+        offset_id = 21
+        prices = []
+        print show.screen_id
+        categories = Category.query(Category.screen_id == show.screen_id).fetch()
+        for category in categories:
+            price1 = Price(id=show.key.id() + offset_id, show_id=show.key, category_id=category.key, amount=500)
+            offset_id += 1
+            prices.append(price1)
+        print "###"
+        print prices
+        for price in prices:
+            price.put()
+
+        # The above paragraph should be deleted later
+
+        return jsonify({'id': res.id(), 'message': "Success"})
 
 
 class CategoryView(MethodView):
@@ -66,18 +86,17 @@ class CategoryView(MethodView):
         category.name = request.form['name']
         category.screen_id = ndb.Key('Screen_Layout', int(request.form['screen_id']))
         category.seats = request.form['seats']
-        res=category.put()
-        return jsonify({'id':res.id(),'message': "Success"})
+        res = category.put()
+        return jsonify({'id': res.id(), 'message': "Success"})
 
 
 class ClientView(MethodView):
     def get(self):
-        id=12345
-        client=ndb.Key('Client', int(id))
-        data=client.get()
-        print(data)        
+        id = 12345
+        client = ndb.Key('Client', int(id))
+        data = client.get()
+        print(data)
         return str(data)
-        
 
     def post(self):
         client = Client()
@@ -85,13 +104,11 @@ class ClientView(MethodView):
         client.name = request.form['name']
         client.description = request.form['description']
         client.screen_list_id = []
-        res=client.put()
+        res = client.put()
         if res:
             return jsonify({'message': "Success", "id": res.id()})
         else:
-            return jsonify({'error':'error message.'})
-
-
+            return jsonify({'error': 'error message.'})
 
 
 class PriceView(MethodView):
@@ -104,51 +121,46 @@ class PriceView(MethodView):
         price.show_id = ndb.Key('Show', int(request.form['show_id']))
         price.category_id = ndb.Key('Category', int(request.form['category_id']))
         price.amount = int(request.form['amount'])
-        res=price.put()
-        return jsonify({'id':res.id(),'message': "Success"})
+        res = price.put()
+        return jsonify({'id': res.id(), 'message': "Success"})
 
 
 class ScreenView(MethodView):
     def get(self):
-        screen=ndb.Key('Screen_Layout', 6192449487634432)
+        screen = ndb.Key('Screen_Layout', 6192449487634432)
         return str(screen.get().seats)
         pass
 
     def post(self):
-        screen=Screen_Layout()
+        screen = Screen_Layout()
         # screen.key=ndb.Key('Screen_Layout', int(request.form['id']))
-        screen.name=request.form['name']
-        screen.client_id=ndb.Key('Client',int(request.form['client_id']))
-        screen.location=request.form['location']
-        screen.max_rows=int(request.form['max_rows'])
-        screen.max_columns=int(request.form['max_columns'])
-        seats=[]
-        max_rows=int(request.form['max_rows'])
-        max_columns=int(request.form['max_columns'])
-        i=1
-        j=1
+        screen.name = request.form['name']
+        screen.client_id = ndb.Key('Client', int(request.form['client_id']))
+        screen.location = request.form['location']
+        screen.max_rows = int(request.form['max_rows'])
+        screen.max_columns = int(request.form['max_columns'])
+        seats = []
+        max_rows = int(request.form['max_rows'])
+        max_columns = int(request.form['max_columns'])
+        i = 1
+        j = 1
         while (i <= max_rows):
-            while (j<= max_columns):
-                seats.append((i,j))
-                j=j+1
-            j=1
-            i=i+1
-        screen.seats=seats
-        result=screen.put()
+            while (j <= max_columns):
+                seats.append({'row': i, 'column': j})
+                j = j + 1
+            j = 1
+            i = i + 1
+        screen.seats = seats
+        result = screen.put()
+
+        # the below paragraph should be deleted later
+        category1 = Category(id=screen.key.id() + 23, seats=screen.seats, screen_id=screen.key,
+                             name="something something")
+        category1.put()
+        # the above paragraph should be deleted later
+
         if result:
-            client=screen.client_id.get()
+            client = screen.client_id.get()
             print client.screen_list_id.append(result.id())
             client.put()
-        return jsonify({'id': result.id(), 'message':"Success"})
-
-
-    
-
-
-
-
-
-
-
-
-
+        return jsonify({'id': result.id(), 'message': "Success"})
