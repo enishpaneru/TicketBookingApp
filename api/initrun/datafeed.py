@@ -23,7 +23,7 @@ def create_clients():
     client1 = Client(id=12345, name="QFX Movies",
                      description="QFX Movies is a good movie hall with different auditoriums.",
                      screen_list_id=[1, 2])
-    client2 = Client(id=1234567, name="BSR Movies",
+    client2 = Client(id=123456, name="BSR Movies",
                      description="BSR Movies is one of the finest movie hall with dolby sound support.",
                      screen_list_id=[3, 4])
 
