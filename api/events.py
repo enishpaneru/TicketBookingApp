@@ -5,6 +5,8 @@ from models.show import Show
 from models.client import Client
 from models.screen_layout import Screen_Layout
 from google.appengine.ext import ndb
+from models.category import Category
+from models.price import Price
 
 
 class ListEventView(MethodView):
@@ -45,3 +47,21 @@ class ListEventShowView(MethodView):
 
         return jsonify(shows_list)
 
+
+class DetailShowView(MethodView):
+    def get(self, show_id):
+        show = ndb.Key(Show, show_id).get()
+        show_screen = show.screen_id.get()
+        screen_max_row_col = (show_screen.max_rows, show_screen.max_columns)
+        seats_price = {}
+        categories = Category.query().fetch()
+        for category in categories:
+            price = Price.query(Price.show_id == show.key, Price.category_id == category.key).get()
+            for seat in category.seats:
+                seats_price[seat] = price
+        seats_info = []
+        for seat in show.seats:
+            seat_detail = seat
+            seat_detail['price'] = seats_price[(seat['row'], seat['column'])]
+            seats_info.append(seat_detail)
+        return jsonify({'show_id': show.key.id(), 'screen_max_row_col': screen_max_row_col, 'screen_seats': seats_info})
