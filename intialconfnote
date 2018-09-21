@@ -1,0 +1,10 @@
+#call '/initdatafeed' initially to load the initial dummy data if data store is empty
+
+#Seats info:
+    # seat status info
+        0: Booked,
+        1: Bought,
+        2: maintenance,
+        3: Unavailable,
+        4: Available
+

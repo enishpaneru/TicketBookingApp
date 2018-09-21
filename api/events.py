@@ -27,6 +27,7 @@ class ListEventView(MethodView):
 
 class ListEventShowView(MethodView):
     def get(self, event_id):
+        event_id = int(event_id)
         query = Show.query(Show.event_id == ndb.Key(Event, event_id))
         shows_list = []
         for each in query.fetch():
@@ -49,16 +50,22 @@ class ListEventShowView(MethodView):
 
 
 class DetailShowView(MethodView):
-    def get(self, show_id):
+    def get(self, event_id, show_id):
+        event_id = int(event_id)
+        show_id = int(show_id)
         show = ndb.Key(Show, show_id).get()
         show_screen = show.screen_id.get()
         screen_max_row_col = (show_screen.max_rows, show_screen.max_columns)
         seats_price = {}
-        categories = Category.query().fetch()
+        categories = Category.query(Category.screen_id == show.screen_id).fetch()
         for category in categories:
             price = Price.query(Price.show_id == show.key, Price.category_id == category.key).get()
+            if price is not None:
+                price_amount = price.amount
+            else:
+                price_amount = 0
             for seat in category.seats:
-                seats_price[seat] = price
+                seats_price[(seat['row'], seat['column'])] = price_amount
         seats_info = []
         for seat in show.seats:
             seat_detail = seat
