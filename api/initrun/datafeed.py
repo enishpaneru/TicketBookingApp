@@ -1,12 +1,13 @@
+from datetime import datetime
+
 from google.appengine.ext import ndb
+
+from models.category import Category
 from models.client import Client
 from models.event import Event
+from models.price import Price
 from models.screen_layout import Screen_Layout
 from models.show import Show
-from models.category import Category
-from models.price import Price
-
-from datetime import datetime
 
 
 def InitDataFeed():
