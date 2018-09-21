@@ -21,7 +21,7 @@ class EventView(MethodView):
 
     def post(self):
         event=Event()
-        event.name = ndb.Key('Client',request.form['client_id'])
+        event.name = ndb.Key('Client',int(request.form['client_id']))
         event.name=request.form['name']
         event.description=request.form['description']
         event.active_shows_id=request.form['active_shows_id']
@@ -35,9 +35,9 @@ class ShowView(MethodView):
 
     def post(self):
         show = Show()
-        show.event_id = ndb.Key('Event', request.form['event_id'])
-        show.client_id = ndb.Key('Client', request.form['client_id'])
-        show.screen_id = ndb.Key('ScreenLayout', request.form['screen_id'])
+        show.event_id = ndb.Key('Event', int(request.form['event_id']))
+        show.client_id = ndb.Key('Client', int(request.form['client_id']))
+        show.screen_id = ndb.Key('ScreenLayout', int(request.form['screen_id']))
         show.show_name = request.form['show_name']
         show.datetime = datetime.datetime.now()
         show.seats = request.form['seats']
@@ -52,7 +52,7 @@ class CategoryView(MethodView):
     def post(self):
         category = Category()
         category.category_name = request.form['category_name']
-        category.screen_id = ndb.Key('Screen', request.form['screen_id'])
+        category.screen_id = ndb.Key('Screen', int(request.form['screen_id']))
         category.seats = request.form['seats']
         category.put()
         return jsonify({'message': "Success"})
@@ -86,8 +86,8 @@ class PriceView(MethodView):
 
     def post(self):
         price = Price()
-        price.show_id = ndb.Key('Show', request.form['show_id'])
-        price.category_id = ndb.Key('Category', request.form['category_id'])
+        price.show_id = ndb.Key('Show', int(request.form['show_id']))
+        price.category_id = ndb.Key('Category', int(request.form['category_id']))
         price.amount = int(request.form['price'])
         price.put()
         return jsonify({'message': "Success"})
