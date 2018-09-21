@@ -59,14 +59,14 @@ class CategoryView(MethodView):
 
 
 class ClientView(MethodView):
-    def get(self):
-        client=ndb.Key('Client', 4855443348258816)
+    def get(self, id):
+        client=ndb.Key('Client', int(id))
         data=client.get()
         print(data)        
         return str(data)
         
 
-    def post(self):
+    def post(self, id):
         client = Client()
         client.name = request.form['client_name']
         client.description = request.form['client_description']

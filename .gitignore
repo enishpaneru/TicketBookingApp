@@ -3,3 +3,7 @@ env/
 .vscode/
 .idea/
 *.pyc
+models/*.pyc
+api/*.pyc
+static/*.pyc
+templates/*.pyc
