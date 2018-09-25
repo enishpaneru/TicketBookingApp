@@ -37,7 +37,6 @@ class ShowView(MethodView):
     def get(self):
         show = ndb.Key('Show', 4785074604081152)
         return str(show.get().seats)
-        pass
 
     def post(self):
         show = Show()

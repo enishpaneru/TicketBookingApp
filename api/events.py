@@ -66,9 +66,11 @@ class DetailShowView(MethodView):
                 price_amount = 0
             for seat in category.seats:
                 seats_price[(seat['row'], seat['column'])] = price_amount
-        seats_info = []
+        seats_info = {}
         for seat in show.seats:
-            seat_detail = seat
-            seat_detail['price'] = seats_price[(seat['row'], seat['column'])]
-            seats_info.append(seat_detail)
+            # seat_detail = seat
+            seats_info[str(seat['row']) + '-' + str(seat['column'])] = {
+                'price': seats_price[(seat['row'], seat['column'])], 'status': seat['status']}
+            # seat_detail['price'] = seats_price[(seat['row'], seat['column'])]
+            # seats_info.append(seat_detail)
         return jsonify({'show_id': show.key.id(), 'screen_max_row_col': screen_max_row_col, 'screen_seats': seats_info})
