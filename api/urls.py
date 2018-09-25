@@ -1,5 +1,5 @@
 from events import ListEventView, ListEventShowView, DetailShowView
-from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView
+from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView, ScreenViewManual, ShowViewManual
 from initrun.datafeed import InitDataFeed
 
 
@@ -26,6 +26,8 @@ def add_dummy_rule(app):
     app.add_url_rule('/postclient', view_func=ClientView.as_view('ADD_CLIENT'), methods=['get', 'post'])
     app.add_url_rule('/postprice', view_func=PriceView.as_view('ADD_PRICE'), methods=['get', 'post'])
     app.add_url_rule('/postscreen', view_func=ScreenView.as_view('ADD_SCREEN'), methods=['get', 'post'])
+    app.add_url_rule('/postscreenman', view_func=ScreenViewManual.as_view('ADD_MAN_SCREEN'), methods=['get', 'post'])
+    app.add_url_rule('/postshowman', view_func=ShowViewManual.as_view('ADD_MAN_SHOW'), methods=['get', 'post'])
     return app
 
 
