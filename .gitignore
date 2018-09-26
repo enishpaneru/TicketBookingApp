@@ -7,3 +7,4 @@ models/*.pyc
 api/*.pyc
 static/*.pyc
 templates/*.pyc
+git 
