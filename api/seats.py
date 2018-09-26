@@ -5,7 +5,7 @@ from models.show import Show
 import datetime
 
 
-def change_seat_availability(self):
+def change_seat_availability():
         id=int(request.form['show_id'])
         seat_no=request.form['seat_no']
         print(type(id))
@@ -17,8 +17,8 @@ def change_seat_availability(self):
                 show.seats[seat_no]['status']=3
                 show.put()
                 print(show.seats)
-                return jsonify({'status':200, 'message': "Seat successfully booked."})
-            else:
-                return jsonify({'status':404, 'message': "Seat is unavailable for booking."})
+                return jsonify({'status':200, 'message': "Seat status changed."})
+            else :
+                return jsonify({'status':404, 'message': "Seat is unavailable for changing status."})
         else:
             return jsonify({'status':404, 'message': "Seat not found."})
