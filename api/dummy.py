@@ -36,8 +36,8 @@ class EventView(MethodView):
 
 class ShowView(MethodView):
     def get(self):
-        show = ndb.Key('Show', 5348024557502464)
-        return str(show.get().seats)
+        show = ndb.Key('Show', 4679521487814656)
+        return str((show.get().seats))
         pass
 
     def post(self):
@@ -51,11 +51,9 @@ class ShowView(MethodView):
         screen = ndb.Key('Screen_Layout', int(request.form['screen_id']))
         seats = screen.get().seats
         print type(seats)
-        updated_seats = []
+        updated_seats = {}
         for each in seats:
-            newseat = each
-            newseat['status'] = 4
-            updated_seats.append(newseat)
+            updated_seats[str(each['row'])+'-'+str(each['column'])]= {'status':4}
         show.seats = updated_seats
         res = show.put()
 
@@ -80,6 +78,8 @@ class ShowView(MethodView):
 
 class CategoryView(MethodView):
     def get(self):
+        category = ndb.Key('Category', 6368371348078592)
+        return str(type(category.get().seats))
         pass
 
     def post(self):
@@ -87,9 +87,9 @@ class CategoryView(MethodView):
         # category.key=ndb.Key('Category', int(request.form['id']))
         category.name = request.form['name']
         category.screen_id = ndb.Key('Screen_Layout', int(request.form['screen_id']))
-        category.seats = request.form['seats']
+        category.seats = list(json.loads(request.form['seats'].decode('ascii','ignore')))
         res = category.put()
-        return jsonify({'id': res.id(), 'message': "Success"})
+        return jsonify({'id': res.id(),  'message': "Success"})
 
 
 class ClientView(MethodView):
@@ -129,8 +129,8 @@ class PriceView(MethodView):
 
 class ScreenView(MethodView):
     def get(self):
-        screen = Screen_Layout().query()
-        return str(screen.fetch())
+        screen = ndb.Key('Screen_Layout', 4820258976169984)
+        return str(type(screen.get().seats))
         pass
 
     def post(self):
@@ -148,7 +148,7 @@ class ScreenView(MethodView):
         j = 1
         while (i <= max_rows):
             while (j <= max_columns):
-                seats.append({'row': i, 'column': j})
+                seats.append({'row': i, 'column':j})
                 j = j + 1
             j = 1
             i = i + 1
@@ -184,7 +184,6 @@ class ScreenViewManual(MethodView):
         screen.max_rows = int(request.form['max_rows'])
         screen.max_columns = int(request.form['max_columns'])
         screen.seats = list(json.loads(request.form['seats'].decode('ascii','ignore')))
-        print (screen.seats)[2]['row']
         # max_rows = int(request.form['max_rows'])
         # max_columns = int(request.form['max_columns'])
         # i = 1
@@ -215,7 +214,7 @@ class ScreenViewManual(MethodView):
 
 class ShowViewManual(MethodView):
     def get(self):
-        show = ndb.Key('Show', 5348024557502464)
+        show = ndb.Key('Show', 6685030696878080)
         return str(show.get().seats)
         pass
 
@@ -231,14 +230,12 @@ class ShowViewManual(MethodView):
         seats = screen.get().seats
         
         print type(seats)
-        updated_seats = []
+        updated_seats = {}
         for each in seats:
-            newseat = each
-            newseat['status'] = 4
-            updated_seats.append(newseat)
+            updated_seats[str(each['row'])+'-'+str(each['column'])]= {'status':4}
         show.seats = updated_seats
         res = show.put()
-
+        print(show.seats)
         # The below paragraph should be deleted later
         offset_id = 21
         prices = []
