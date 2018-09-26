@@ -5,7 +5,6 @@ from flask import jsonify
 
 JWT_SECRET = 'secret'
 JWT_ALGORITHM = 'HS256'
-JWT_EXP_DELTA_SECONDS = 2000
 
 login_required_paths = ['/events/*/shows/*']
 relogin_path = "/events"
@@ -34,7 +33,7 @@ class LoggerMiddleware(object):
         return self.app(environ, start_response)
 
 
-def create_user_token(user_id):
+def create_user_token(user_id, JWT_EXP_DELTA_SECONDS):
     payload = {
         'user_id': user_id,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=JWT_EXP_DELTA_SECONDS)
@@ -43,4 +42,10 @@ def create_user_token(user_id):
     return jwt_token
 
 
-
+def check_user_token(jwt_token):
+    try:
+        payload = jwt.decode(jwt_token, JWT_SECRET,
+                             algorithms=[JWT_ALGORITHM])
+        return payload['user_id']
+    except (jwt.DecodeError, jwt.ExpiredSignatureError):
+        return False

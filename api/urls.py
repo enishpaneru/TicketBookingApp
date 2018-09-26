@@ -1,14 +1,18 @@
 from events import ListEventView, ListEventShowView, DetailShowView
-from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView, ScreenViewManual, ShowViewManual
+from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView, ScreenViewManual, \
+    ShowViewManual
 from users import UserRegisterView, UserTypeView, UserLoginView
 from initrun.datafeed import InitDataFeed
+from clients import ClientAdditionView,ClientRegisterView
 
 
 def app_add_urls(app):
     app = add_events_rule(app)
     app = add_dummy_rule(app)
     app = add_initrun_rule(app)
-    app=add_user_rules(app)
+    app = add_user_rules(app)
+    app = action_on_client_rules(app)
+    app=add_client_rules(app)
     return app
 
 
@@ -25,6 +29,17 @@ def add_user_rules(app):
     app.add_url_rule('/user/register', view_func=UserRegisterView.as_view('ADD_USER_VIEW'), methods=['post'])
     app.add_url_rule('/user/login', view_func=UserLoginView.as_view('LOGIN_USER_VIEW'), methods=['post'])
     app.add_url_rule('/user/addtype', view_func=UserTypeView.as_view('ADD_USER_TYPE_VIEW'), methods=['post'])
+    return app
+
+
+def add_client_rules(app):
+    app.add_url_rule('/client/register', view_func=ClientRegisterView.as_view('CLIENT_REGISTER_VIEW'), methods=['post'])
+    return app
+
+
+def action_on_client_rules(app):
+    app.add_url_rule('/admin/addclient', view_func=ClientAdditionView.as_view('ADD_CLIENT_VIEW'), methods=['post'])
+
     return app
 
 
