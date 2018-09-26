@@ -54,7 +54,7 @@ def add_dummy_rule(app):
     app.add_url_rule('/postscreen', view_func=ScreenView.as_view('ADD_SCREEN'), methods=['get', 'post'])
     app.add_url_rule('/postscreenman', view_func=ScreenViewManual.as_view('ADD_MAN_SCREEN'), methods=['get', 'post'])
     app.add_url_rule('/postshowman', view_func=ShowViewManual.as_view('ADD_MAN_SHOW'), methods=['get', 'post'])
-    app.route('/seatstatus', change_seat_availability())    
+    app.add_url_rule('/seatstatus','Change Seat Status', change_seat_availability, methods=['post'])    
     return app
 
 

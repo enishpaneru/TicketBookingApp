@@ -16,9 +16,28 @@ class UserRegisterView(MethodView):
         pass
 
     def post(self):
-        query=User.query(User.username==request.form['username']).fetch()
-        if query:
-            return jsonify({'id': query[0].username, 'message': "Username Exists please use another username"})
+        # Queries for initial Checks
+        USER_EXIST_QUERY=User.query(User.username==request.form['username'])
+        EMAIL_EXIST_QUERY=User.query(User.email==request.form['email'])
+        PHONE_EXIST_QUERY=User.query(User.contact==request.form['contact'])
+        # Pre checks to check exisitng data.
+        pre_check={
+                            'USER_EXISTS':USER_EXIST_QUERY.fetch(),
+                            'EMAIL_EXISTS':EMAIL_EXIST_QUERY.fetch(), 
+                            'PHONE_EXISTS':PHONE_EXIST_QUERY.fetch()
+                    }
+        print(pre_check['PHONE_EXISTS'])
+        # Error messages for certain pre checks.
+        error_messages={
+                            'USER_EXISTS':'Username exists please use another username.',
+                            'EMAIL_EXISTS':'Email exists please use another email.',
+                            'PHONE_EXISTS':'Phone exists please use another phone.'
+                        }
+        
+        errors=map(lambda k: error_messages[k], filter(lambda k: pre_check[k], pre_check))
+
+        if errors:
+            return jsonify({'status': 400, 'message': errors})
         else:
             print 'No User'
             # Add user credentials and minor info
