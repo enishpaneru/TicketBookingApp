@@ -4,8 +4,9 @@ from flask import jsonify, request
 from models.user import User
 from models.user_type import User_Type
 from models.user_detail import User_Detail
+from models.show import Show
 from werkzeug.security import generate_password_hash, check_password_hash
-import datetime
+import datetime, json
 
 
 
@@ -89,6 +90,69 @@ class UserTypeView(MethodView):
                 return jsonify({'status':200, 'id': res.id(), 'message': "UserType successfully created."})
             else:
                 return jsonify({'status': 500 , 'message': "Error occured"})
+
+
+
+class UserBuySeat(MethodView):
+    def get(self):
+        pass
+
+    def post(self):
+         # Get a show id and json array of seats from post data and complete book operation
+        # Incoming post data format:
+        # show_id=123123123
+        # seat_no={'seats': ["1-2","1-3"]}
+        id=int(request.form['show_id'])
+        seat_no=request.form['seat_no'].decode('ascii','ignore')    # JSON DECODE to dict
+        seat_no=json.loads(seat_no)
+        print(seat_no['seats'][0])
+        show=Show.get_by_id(id)
+        for each in seat_no['seats']:   # For each item in seats check if seats exist and is available for booking.
+            if show.seats.get(each):
+                if show.seats[each]['status']==4:
+                    show.seats[each]['status']=1
+                    status=200
+                else:
+                    return jsonify({'status':404, 'message': "Seat no. "+each+" is unavailable for buying."})
+            else:
+                return jsonify({'status':404, 'message': "Seat no. "+each+" not found."})
+        res=show.put()
+        print(res.get().seats)
+        return jsonify({'status':200, 'message': "Seat successfully bought."})
+
+
+
+
+class UserBookSeat(MethodView):
+    def get(self):
+        pass
+
+    def post(self): 
+        # Get a show id and json array of seats from post data and complete book operation
+        # Incoming post data format:
+        # show_id=123123123
+        # seat_no={'seats': ["1-2","1-3"]}
+        id=int(request.form['show_id'])
+        seat_no=request.form['seat_no'].decode('ascii','ignore')    # JSON DECODE to dict
+        seat_no=json.loads(seat_no)
+        print(seat_no['seats'][0])
+        show=Show.get_by_id(id)
+        for each in seat_no['seats']:   # For each item in seats check if seats exist and is available for booking.
+            if show.seats.get(each):
+                if show.seats[each]['status']==4:
+                    show.seats[each]['status']=0
+                    status=200
+                else:
+                    return jsonify({'status':404, 'message': "Seat no. "+each+" is unavailable for booking."})
+            else:
+                return jsonify({'status':404, 'message': "Seat no. "+each+" not found."})
+        res=show.put()
+        print(res.get().seats)
+        return jsonify({'status':200, 'message': "Seat successfully booked."})
+
+
+
+
 
 
 
