@@ -1,9 +1,11 @@
-from events import ListEventView, ListEventShowView, DetailShowView
+from events import ListEventView, ListEventShowView, DetailShowView, EventAddView
 from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView, ScreenViewManual, ShowViewManual
 from users import UserRegisterView, UserTypeView, UserLoginView, UserBuySeat, UserBookSeat
 from api.seats import change_seat_availability
 from initrun.datafeed import InitDataFeed
 from clients import ClientAdditionView,ClientRegisterView
+from shows import ShowAddView
+from screens import ScreenAddView, ScreenUpdateView, ScreenDeleteMethod
 
 
 def app_add_urls(app):
@@ -12,7 +14,9 @@ def app_add_urls(app):
     app = add_initrun_rule(app)
     app = add_user_rules(app)
     app = action_on_client_rules(app)
-    app=add_client_rules(app)
+    app=add_client_rule(app)
+    app=add_shows_rule(app)
+    app=add_screens_rule(app)
     return app
 
 
@@ -22,6 +26,18 @@ def add_events_rule(app):
                      methods=['get', 'post'])
     app.add_url_rule('/events/<event_id>/shows/<show_id>', view_func=DetailShowView.as_view('show_detail'),
                      methods=['get', 'post'])
+    app.add_url_rule('/events/add', view_func=EventAddView.as_view('add_events'),
+                     methods=['get', 'post'])                     
+    return app
+
+def add_shows_rule(app):
+    app.add_url_rule('/shows/add', view_func=ShowAddView.as_view('Add_SHOW'), methods=['get', 'post'])
+    return app
+
+def add_screens_rule(app):
+    app.add_url_rule('/screens/add', view_func=ScreenAddView.as_view('Add_SCREEN'), methods=['post'])
+    app.add_url_rule('/screens/update', view_func=ScreenUpdateView.as_view('UPDATE_SCREEN'), methods=['post'])
+    app.add_url_rule('/screens/delete/<id>','Screen Delete Request', ScreenDeleteMethod, methods=['delete'])
     return app
 
 
@@ -34,7 +50,7 @@ def add_user_rules(app):
     return app
 
 
-def add_client_rules(app):
+def add_client_rule(app):
     app.add_url_rule('/client/register', view_func=ClientRegisterView.as_view('CLIENT_REGISTER_VIEW'), methods=['post'])
     return app
 

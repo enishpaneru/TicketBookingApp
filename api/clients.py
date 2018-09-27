@@ -93,3 +93,5 @@ class ClientAdditionView(MethodView):
         self.send_mail(client_id, client_name, client_email)
 
         return "Success"
+
+
