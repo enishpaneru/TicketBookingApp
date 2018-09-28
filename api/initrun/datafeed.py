@@ -9,6 +9,8 @@ from models.price import Price
 from models.screen_layout import Screen_Layout
 from models.show import Show
 from models.user import User
+from models.user_type import User_Type
+from models.user_detail import User_Detail
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -20,6 +22,8 @@ def InitDataFeed():
     create_categories()
     create_prices()
     create_users()
+    create_user_types()
+    create_user_details()
     return 'Success'
 
 
@@ -115,4 +119,25 @@ def create_prices():
 
 
 def create_users():
-    user1 = User(id=1, username="enish", password=generate_password_hash("paneru"))
+    user1 = User(id=1, username="enish_paneru", password=generate_password_hash("enish_paneru_123"),
+                 email="paneruenish.ep@gmail.com", contact=989898, description="Good Guy", created_date=datetime.now(),
+                 last_login=datetime.now(), type_id=ndb.Key(User_Type, 1), detail_id=ndb.Key(User_Detail, 1))
+    user2 = User(id=1, username="raj_shrestha", password=generate_password_hash("raj_shrestha_123"),
+                 email="razzester86@gmail.com", contact=422422, description="Nice Guy", created_date=datetime.now(),
+                 last_login=datetime.now(), type_id=ndb.Key(User_Type, 2), detail_id=ndb.Key(User_Detail, 2))
+    ndb.put_multi([user1, user2])
+
+
+def create_user_types():
+    user_type1 = User_Type(id=1, name="Admin", permissions={})
+    user_type2 = User_Type(id=2, name="Client", permissions={})
+    user_type3 = User_Type(id=3, name="General", permissions={})
+    ndb.put_multi([user_type1, user_type2, user_type3])
+
+
+def create_user_details():
+    user_detail1 = User_Detail(id=1, first_name="Enish", middle_name="", last_name="Paneru", location="Naikap",
+                               dob=datetime.strptime("2053-01-17", '%Y-%m-%d'))
+    user_detail2 = User_Detail(id=2, first_name="Raj", middle_name="", last_name="Shrestha", location="Gonagabu",
+                               dob=datetime.strptime("2052-05-15", '%Y-%m-%d'))
+    ndb.put_multi([user_detail1, user_detail2])

@@ -6,10 +6,10 @@ from models.user import User
 JWT_SECRET = 'secret'
 JWT_ALGORITHM = 'HS256'
 
-login_not_required_paths = ['/events', '/events/[0-9]*', '/events/*/shows', '/initdatafeed', '/login', '/postevent',
+login_not_required_paths = ['/', '/events', '/events/[0-999999999999999999999]', '/events/*/shows', '/initdatafeed', '/login',
+                            '/postevent',
                             '/postshow',
                             '/postcategory', '/postclient', '/postprice', 'postscreen', 'postscreenman', '/postshowman']
-
 
 class LoggerMiddleware(object):
     def __init__(self, app):

@@ -81,7 +81,7 @@ class ClientAdditionView(MethodView):
 
     def send_mail(self, client_id, client_name, client_email):
         client_token = create_user_token(client_id, self.link_expiry_period)
-        account_create_url = "http://127.0.0.1:8080/client/createaccount/" + client_token
+        account_create_url = "http://ticketbooking-12.appspot.com/client/register" + client_token
         msg_body = "Hello" + client_name + "\n" + "click here to create your account \n" + account_create_url
         new_mail = MailService(self.mail_subject, self.mail_sender, client_email, msg_body)
         result = new_mail.send_mail()
@@ -89,7 +89,6 @@ class ClientAdditionView(MethodView):
 
     def post(self):
         # add client here
-        print "###"
         print request.json
         new_client = Client(name=request.json['name'], description=request.json['description'])
         client_key = new_client.put()
