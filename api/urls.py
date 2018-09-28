@@ -54,7 +54,7 @@ def add_screens_rule(app):
 
 
 def add_user_rules(app):
-    app.add_url_rule('/user/register', view_func=UserRegisterView.as_view('ADD_USER_VIEW'), methods=['post'])
+    app.add_url_rule('/register/user', view_func=UserRegisterView.as_view('ADD_USER_VIEW'), methods=['post'])
     app.add_url_rule('/user/login', view_func=UserLoginView.as_view('LOGIN_USER_VIEW'), methods=['post'])
     app.add_url_rule('/user/addtype', view_func=UserTypeView.as_view('ADD_USER_TYPE_VIEW'), methods=['post'])
     app.add_url_rule('/user/buyseat', view_func=UserBuySeat.as_view('ADD_BUY_SEAT_VIEW'), methods=['post'])
@@ -63,7 +63,7 @@ def add_user_rules(app):
 
 
 def add_client_rules(app):
-    app.add_url_rule('/client/register', view_func=ClientRegisterView.as_view('CLIENT_REGISTER_VIEW'), methods=['post'])
+    app.add_url_rule('/register/client', view_func=ClientRegisterView.as_view('CLIENT_REGISTER_VIEW'), methods=['post'])
     app.add_url_rule('/client/listevents', view_func=ListClientEvent.as_view('LIST_CLIENT_EVENT_VIEW'), methods=['get'])
     app.add_url_rule('/client/listscreens', view_func=ListClientScreens.as_view('LIST_CLIENT_SCREEN_VIEW'),
                      methods=['get'])
