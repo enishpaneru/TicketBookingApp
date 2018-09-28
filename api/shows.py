@@ -44,4 +44,47 @@ class ShowAddView(MethodView):
         return jsonify({"code": 200, "id": res.id(), "message": "Success"})
 
 
+
+
+class ShowUpdateView(MethodView):
+    def get(self):
+        show = ndb.Key('Show', 4679521487814656)
+        return str((show.get().seats))
+        pass
+
+    def post(self):
+        show = Show.get_by_id(request.json['id'])
+        if not show:
+                return jsonify({"code":404, "message":"Show Not found."})   
+        # user=request.environ['USER_ID'].get()
+        client_id=ndb.Key('Client',request.json['client_id'])
+        # Check if the user is authorized to edit.
+        if client_id!=show.client_id:
+            return jsonify({"code": 400,  "message": "Not authorized."})
+        # UPDATE EXISTING DATA MINOR INFORMATIONS
+        show.event_id = ndb.Key('Event', int(request.json['event_id']))
+        show.screen_id = ndb.Key('Screen_Layout', int(request.json['screen_id']))
+        show.name = request.json['name']
+        show.datetime=datetime.strptime(request.json['datetime'], "%Y-%m-%d %I:%M %p")
+        res=show.put()
+                
+        return jsonify({"code": 200, "id": res.id(), "message": "Success"})
+
+
+
+
+
+
+
+# Delete request for shows.
+def ShowDeleteMethod(id):
+            try:
+                show=ndb.Key('Show', int(id))
+                if show.get()==None:
+                    return jsonify({"code":404, "message":"Show Not found."})    
+                show.delete()
+                return jsonify({"code":200, "message":"Show Successfully deleted."})
+            except :
+                return jsonify({"code":500, "message":"Server Error."})
+    
         

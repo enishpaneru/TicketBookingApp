@@ -8,8 +8,8 @@ import datetime
 def change_seat_availability():
     # LIST to status map
         status=['Booked','Bought','Under Maintenance', 'Unavailable', 'Available']
-        id=int(request.form['show_id'])
-        seat_no=request.form['seat_no']
+        id=int(request.json['show_id'])
+        seat_no=request.json['seat_no']
         print(type(id))
         show=Show.get_by_id(id)
         seats=show.seats

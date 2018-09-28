@@ -4,7 +4,7 @@ from users import UserRegisterView, UserTypeView, UserLoginView, UserBuySeat, Us
 from api.seats import change_seat_availability
 from initrun.datafeed import InitDataFeed
 from clients import ClientAdditionView,ClientRegisterView
-from shows import ShowAddView
+from shows import ShowAddView, ShowUpdateView, ShowDeleteMethod
 from screens import ScreenAddView, ScreenUpdateView, ScreenDeleteMethod
 
 
@@ -32,6 +32,8 @@ def add_events_rule(app):
 
 def add_shows_rule(app):
     app.add_url_rule('/shows/add', view_func=ShowAddView.as_view('Add_SHOW'), methods=['get', 'post'])
+    app.add_url_rule('/shows/delete/<id>','Show Delete Request', ShowDeleteMethod, methods=['delete'])
+    app.add_url_rule('/shows/update', view_func=ShowUpdateView.as_view('Show UPDATE Request'), methods=['post'])
     return app
 
 def add_screens_rule(app):

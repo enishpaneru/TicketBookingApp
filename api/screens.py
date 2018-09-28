@@ -52,7 +52,7 @@ class ScreenUpdateView(MethodView):
         client_id=screen.client_id.id()
         print client_id
         if client_id!=request.json['client_id']:    # Later this is to be changed with token.
-            return jsonify({"code": 404,  "message": "Not authorized."})
+            return jsonify({"code": 400,  "message": "Not authorized."})
         screen.location = request.json['location']
         
         prev_rows=screen.max_rows
@@ -91,7 +91,7 @@ class ScreenUpdateView(MethodView):
 
 def ScreenDeleteMethod(id):
             try:
-                screen=ndb.Key('Screen_Layout', id)
+                screen=ndb.Key('Screen_Layout', int(id))
                 if not screen:
                     return jsonify({"code":200, "message":"Screen Not found."})    
                 screen.delete()
