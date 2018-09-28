@@ -8,6 +8,10 @@ from models.event import Event
 from models.price import Price
 from models.screen_layout import Screen_Layout
 from models.show import Show
+from models.user import User
+from models.user_type import User_Type
+from models.user_detail import User_Detail
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 def InitDataFeed():
@@ -17,6 +21,9 @@ def InitDataFeed():
     create_shows()
     create_categories()
     create_prices()
+    create_users()
+    create_user_types()
+    create_user_details()
     return 'Success'
 
 
@@ -68,23 +75,20 @@ def create_shows():
     show1 = Show(id=1, event_id=ndb.Key(Event, 1), client_id=ndb.Key(Client, 12345),
                  screen_id=ndb.Key(Screen_Layout, 1),
                  datetime=datetime.strptime("2018-09-24 12:00:00.0", '%Y-%m-%d %H:%M:%S.%f'),
-                 seats=[{'row': 1, 'column': 1, 'status': 4}, {'row': 1, 'column': 2, 'status': 4},
-                        {'row': 2, 'column': 1, 'status': 4}, {'row': 2, 'column': 2, 'status': 4}])
+                 seats={'1-1': {'status': 4}, '1-2': {'status': 4}, '2-1': {'status': 4}, '2-2': {'status': 4}})
     show2 = Show(id=2, event_id=ndb.Key(Event, 2), client_id=ndb.Key(Client, 12345),
                  screen_id=ndb.Key(Screen_Layout, 2),
                  datetime=datetime.strptime("2018-09-20 12:00:00.0", '%Y-%m-%d %H:%M:%S.%f'),
-                 seats=[{'row': 1, 'column': 1, 'status': 4}, {'row': 1, 'column': 2, 'status': 4},
-                        {'row': 2, 'column': 1, 'status': 4}, {'row': 2, 'column': 2, 'status': 4}])
+                 seats={'1-1': {'status': 4}, '1-2': {'status': 4}, '2-1': {'status': 4}, '2-2': {'status': 4}})
+
     show3 = Show(id=3, event_id=ndb.Key(Event, 4), client_id=ndb.Key(Client, 123456),
                  screen_id=ndb.Key(Screen_Layout, 3),
                  datetime=datetime.strptime("2018-09-20 12:00:00.0", '%Y-%m-%d %H:%M:%S.%f'),
-                 seats=[{'row': 1, 'column': 1, 'status': 4}, {'row': 1, 'column': 2, 'status': 4},
-                        {'row': 2, 'column': 1, 'status': 4}, {'row': 2, 'column': 2, 'status': 4}])
+                 seats={'1-1': {'status': 4}, '1-2': {'status': 4}, '2-1': {'status': 4}, '2-2': {'status': 4}})
     show4 = Show(id=4, event_id=ndb.Key(Event, 3), client_id=ndb.Key(Client, 123456),
                  screen_id=ndb.Key(Screen_Layout, 4),
                  datetime=datetime.strptime("2018-09-20 12:00:00.0", '%Y-%m-%d %H:%M:%S.%f'),
-                 seats=[{'row': 1, 'column': 1, 'status': 4}, {'row': 1, 'column': 2, 'status': 4},
-                        {'row': 2, 'column': 1, 'status': 4}, {'row': 2, 'column': 2, 'status': 4}])
+                 seats={'1-1': {'status': 4}, '1-2': {'status': 4}, '2-1': {'status': 4}, '2-2': {'status': 4}})
     ndb.put_multi([show1, show2, show3, show4])
 
 
@@ -112,3 +116,28 @@ def create_prices():
     price4 = Price(id=4, show_id=ndb.Key(Show, 3), category_id=ndb.Key(Category, 4), amount=200)
     price5 = Price(id=5, show_id=ndb.Key(Show, 4), category_id=ndb.Key(Category, 4), amount=1000)
     ndb.put_multi([price1, price2, price3, price4, price5])
+
+
+def create_users():
+    user1 = User(id=1, username="enish_paneru", password=generate_password_hash("enish_paneru_123"),
+                 email="paneruenish.ep@gmail.com", contact=989898, description="Good Guy", created_date=datetime.now(),
+                 last_login=datetime.now(), type_id=ndb.Key(User_Type, 1), detail_id=ndb.Key(User_Detail, 1))
+    user2 = User(id=1, username="raj_shrestha", password=generate_password_hash("raj_shrestha_123"),
+                 email="razzester86@gmail.com", contact=422422, description="Nice Guy", created_date=datetime.now(),
+                 last_login=datetime.now(), type_id=ndb.Key(User_Type, 2), detail_id=ndb.Key(User_Detail, 2))
+    ndb.put_multi([user1, user2])
+
+
+def create_user_types():
+    user_type1 = User_Type(id=1, name="Admin", permissions={})
+    user_type2 = User_Type(id=2, name="Client", permissions={})
+    user_type3 = User_Type(id=3, name="General", permissions={})
+    ndb.put_multi([user_type1, user_type2, user_type3])
+
+
+def create_user_details():
+    user_detail1 = User_Detail(id=1, first_name="Enish", middle_name="", last_name="Paneru", location="Naikap",
+                               dob=datetime.strptime("2053-01-17", '%Y-%m-%d'))
+    user_detail2 = User_Detail(id=2, first_name="Raj", middle_name="", last_name="Shrestha", location="Gonagabu",
+                               dob=datetime.strptime("2052-05-15", '%Y-%m-%d'))
+    ndb.put_multi([user_detail1, user_detail2])

@@ -25,6 +25,15 @@ class ListEventView(MethodView):
         return jsonify(events_list)
 
 
+class EventDetailView(MethodView):
+    def get(self, event_id):
+        event_id = ndb.Key(Event, int(event_id))
+        event = event_id.get()
+        return jsonify(
+            {'client_id': event.client_id.id(), 'client_name': event.client_id.get().name, 'name': event.name,
+             'duration': event.duration, 'description': event.description})
+
+
 class ListEventShowView(MethodView):
     def get(self, event_id):
         event_id = int(event_id)
@@ -67,10 +76,13 @@ class DetailShowView(MethodView):
             for seat in category.seats:
                 seats_price[(seat['row'], seat['column'])] = price_amount
         seats_info = {}
-        for seat in show.seats:
+        for seat, description in show.seats.iteritems():
+            row, column = seat.split('-')
+            row = int(row)
+            column = int(column)
             # seat_detail = seat
-            seats_info[str(seat['row']) + '-' + str(seat['column'])] = {
-                'price': seats_price[(seat['row'], seat['column'])], 'status': seat['status']}
+            seats_info[seat] = {
+                'price': seats_price[(row, column)], 'status': description['status']}
             # seat_detail['price'] = seats_price[(seat['row'], seat['column'])]
             # seats_info.append(seat_detail)
         return jsonify({'show_id': show.key.id(), 'screen_max_row_col': screen_max_row_col, 'screen_seats': seats_info})

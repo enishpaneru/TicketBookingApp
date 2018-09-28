@@ -4,11 +4,14 @@ from flask import jsonify, request
 from models.user import User
 from models.user_type import User_Type
 from models.user_detail import User_Detail
+from models.event import Event
 from models.client import Client
 from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
 from Mail import MailService
 from middlewares.UserAuthentication import create_user_token, check_user_token
+from models.screen_layout import Screen_Layout
+from models.category import Category
 
 
 class ClientRegisterView(MethodView):
@@ -16,7 +19,6 @@ class ClientRegisterView(MethodView):
         pass
 
     def post(self):
-        print "in post"
         query = User.query(User.username == request.form['username']).fetch()
         if query:
             return jsonify({'id': query[0].username, 'message': "Username Exists please use another username"})
@@ -26,7 +28,8 @@ class ClientRegisterView(MethodView):
             client_id = self.check_client_token(request.headers)
             if not client_id:
                 return jsonify(
-                    {'message': "Token validation gone wrong please request a new registration link from the admins"})
+                    {"status": 500,
+                     'message': "Token validation gone wrong please request a new registration link from the admins"})
 
             # Add user credentials and minor info
             user = User()
@@ -78,20 +81,54 @@ class ClientAdditionView(MethodView):
 
     def send_mail(self, client_id, client_name, client_email):
         client_token = create_user_token(client_id, self.link_expiry_period)
-        account_create_url = "http://127.0.0.1:8080/client/createaccount/" + client_token
+        account_create_url = "http://ticketbooking-12.appspot.com/client/register" + client_token
         msg_body = "Hello" + client_name + "\n" + "click here to create your account \n" + account_create_url
         new_mail = MailService(self.mail_subject, self.mail_sender, client_email, msg_body)
         result = new_mail.send_mail()
-        print "print here"
         print result
 
     def post(self):
         # add client here
-        client_id = 12345  # this should be the newly created client's id
-        client_name = "new client"  # this should be the client name
-        client_email = request.form['email']
+        print request.json
+        new_client = Client(name=request.json['name'], description=request.json['description'])
+        client_key = new_client.put()
+        client_id = client_key.id()  # this should be the newly created client's id
+        client_name = new_client.name  # this should be the client name
+        client_email = request.json['email']
         self.send_mail(client_id, client_name, client_email)
+        return jsonify({'status': 'success'})
 
-        return "Success"
+
+class ListClientEvent(MethodView):
+    def get(self):
+        user_id = request.environ['USER_ID']
+        print "###"
+        print request.environ['USER_ID']
+        client_id = user_id.get().detail_id
+        events = Event.query(Event.client_id == client_id).fetch()
+        events_list = {}
+        for event in events:
+            events_list[event.key.id()] = {"name": event.name, "duration": event.duration,
+                                           "description": event.description}
+        return jsonify(events_list)
 
 
+class ListClientScreens(MethodView):
+    def get(self):
+        user_id = request.environ['USER_ID']
+        client_id = user_id.get().detail_id
+        screens = Screen_Layout.query(Screen_Layout.client_id == client_id).fetch()
+        screen_list = {}
+        for screen in screens:
+            screen_list[screen.key.id()] = {"name": screen.name, "location": screen.location}
+        return jsonify(screen_list)
+
+
+class ListClientScreenCategory(MethodView):
+    def get(self, screen_id):
+        screen_id = ndb.Key(Screen_Layout, screen_id)
+        categories = Category.query(Category.screen_id == screen_id).fetch()
+        category_list = {}
+        for category in categories:
+            category_list[category.key.id()] = {'name': category.name}
+        return jsonify(category_list)

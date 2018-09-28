@@ -8,7 +8,7 @@ class User(ndb.Model):
     email = ndb.StringProperty()
     contact = ndb.IntegerProperty()
     description = ndb.StringProperty()
-    created_date=ndb.DateProperty()
+    created_date=ndb.DateTimeProperty()
     last_login=ndb.DateTimeProperty()
     type_id=ndb.KeyProperty()
     detail_id=ndb.KeyProperty()
