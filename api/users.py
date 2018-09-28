@@ -18,10 +18,12 @@ class UserRegisterView(MethodView):
         pass
 
     def post(self):
+        print '############################'
+        print request.json
         # Queries for initial Checks
         USER_EXIST_QUERY=User.query(User.username==request.json['username'])
         EMAIL_EXIST_QUERY=User.query(User.email==request.json['email'])
-        PHONE_EXIST_QUERY=User.query(User.contact==request.json['contact'])
+        PHONE_EXIST_QUERY=User.query(User.contact==int(request.json['contact']))
         # Pre checks to check exisitng data.
         pre_check={
                             'USER_EXISTS':USER_EXIST_QUERY.fetch(),
@@ -47,7 +49,7 @@ class UserRegisterView(MethodView):
             user.username=request.json['username']
             user.password=generate_password_hash(request.json['password'])
             user.email=request.json['email']
-            user.contact=request.json['contact']
+            user.contact=int(request.json['contact'])
             user.description=request.json['description']
             user.created_date=datetime.date.today()
             user_type=User_Type.query(User_Type.name=='User').fetch()
@@ -119,10 +121,6 @@ class UserBuySeat(MethodView):
         pass
 
     def post(self):
-         # Get a show id and json array of seats from post data and complete book operation
-        # Incoming post data format:
-        # show_id=123123123
-        # seat_no={'seats': ["1-2","1-3"]}
         id=int(request.json['show_id'])
         seat_no=request.json['seat_no']    # JSON DECODE to dict
         print(seat_no['seats'][0])
