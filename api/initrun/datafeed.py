@@ -122,9 +122,9 @@ def create_users():
     user1 = User(id=1, username="enish_paneru", password=generate_password_hash("enish_paneru_123"),
                  email="paneruenish.ep@gmail.com", contact=989898, description="Good Guy", created_date=datetime.now(),
                  last_login=datetime.now(), type_id=ndb.Key(User_Type, 1), detail_id=ndb.Key(User_Detail, 1))
-    user2 = User(id=1, username="raj_shrestha", password=generate_password_hash("raj_shrestha_123"),
+    user2 = User(id=2, username="raj_shrestha", password=generate_password_hash("raj_shrestha_123"),
                  email="razzester86@gmail.com", contact=422422, description="Nice Guy", created_date=datetime.now(),
-                 last_login=datetime.now(), type_id=ndb.Key(User_Type, 2), detail_id=ndb.Key(User_Detail, 2))
+                 last_login=datetime.now(), type_id=ndb.Key(User_Type, 2), detail_id=ndb.Key(Client, 12345))
     ndb.put_multi([user1, user2])
 
 
