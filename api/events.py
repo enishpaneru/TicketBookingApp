@@ -60,6 +60,7 @@ class ListEventShowView(MethodView):
 
 class DetailShowView(MethodView):
     def get(self, event_id, show_id):
+        print request.headers
         event_id = int(event_id)
         show_id = int(show_id)
         show = ndb.Key(Show, show_id).get()

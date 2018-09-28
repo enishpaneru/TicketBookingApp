@@ -4,7 +4,7 @@ from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, 
 from events import ListEventView, ListEventShowView, DetailShowView, EventAddView
 from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView, ScreenViewManual, \
     ShowViewManual
-from users import UserRegisterView, UserTypeView, UserLoginView, UserBuySeat, UserBookSeat
+from users import UserRegisterView, UserTypeView, UserLoginView, UserBuySeat, UserBookSeat, UserDetail
 from api.seats import change_seat_availability
 from initrun.datafeed import InitDataFeed
 from clients import ClientAdditionView, ClientRegisterView, ListClientEvent, ListClientScreens, ListClientScreenCategory
@@ -59,6 +59,7 @@ def add_user_rules(app):
     app.add_url_rule('/user/addtype', view_func=UserTypeView.as_view('ADD_USER_TYPE_VIEW'), methods=['post'])
     app.add_url_rule('/user/buyseat', view_func=UserBuySeat.as_view('ADD_BUY_SEAT_VIEW'), methods=['post'])
     app.add_url_rule('/user/bookseat', view_func=UserBookSeat.as_view('BOOK_SEAT_VIEW'), methods=['post'])
+    app.add_url_rule('/user/detail/<username>', 'User Detail Request', UserDetail,  methods=['get'])
     return app
 
 

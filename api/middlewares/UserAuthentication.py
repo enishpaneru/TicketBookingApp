@@ -2,6 +2,8 @@ import fnmatch, datetime
 import jwt
 from google.appengine.ext import ndb
 from models.user import User
+from cgi import parse_qs
+from flask_cors import cross_origin
 
 JWT_SECRET = 'secret'
 JWT_ALGORITHM = 'HS256'
@@ -9,19 +11,22 @@ JWT_ALGORITHM = 'HS256'
 login_not_required_paths = ['/', '/events', '/events/[0-999999999999999999999]', '/events/*/shows', '/initdatafeed', '/login',
                             '/postevent',
                             '/postshow',
-                            '/postcategory', '/postclient', '/postprice', 'postscreen', 'postscreenman', '/postshowman','/register/*']
+                            '/postcategory', '/postclient', '/postprice', 'postscreen', 'postscreenman', '/postshowman','/register/*', '/user/detail/*']
 
 class LoggerMiddleware(object):
     def __init__(self, app):
         self.app = app
 
+    
     def __call__(self, environ, start_response):
         for path in login_not_required_paths:
             if fnmatch.fnmatch(environ['PATH_INFO'], path):
                 print "open path"
                 return self.app(environ, start_response)
         print "closed path"
-        print environ['PATH_INFO']
+        print environ
+        print parse_qs(environ['wsgi.input'].read())
+
         if 'HTTP_USER_TOKEN' in environ:
             jwt_token = environ['HTTP_USER_TOKEN']
             try:

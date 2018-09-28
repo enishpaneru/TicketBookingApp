@@ -156,3 +156,32 @@ class UserBookSeat(MethodView):
         res = show.put()
         print(res.get().seats)
         return jsonify({'status': 200, 'message': "Seat successfully booked."})
+
+
+def UserDetail(username):
+    query=User.query().filter(User.username==str(username)).fetch()
+    
+    
+    print query
+    if query:
+        detail=query[0].detail_id.get()
+
+        return jsonify({
+            'status': 200,
+            'data': {
+                "first_name": detail.first_name,
+                "middle_name": detail.middle_name,
+                "last_name": detail.last_name,
+                "location": detail.location,
+                "dob":detail.dob,
+                "email": query[0].email,
+                "contact": query[0].contact,
+                "description": query[0].description
+
+
+            }
+        })
+    # query = User.query(User.username == request.json['username']).fetch()
+
+    else:
+        return jsonify({"status": 404, "message":"Not found"})

@@ -11,8 +11,11 @@ def add_middlewares(app):
 
 app = Flask(__name__)
 CORS(app)
+
 app = app_add_urls(app)
 app = add_middlewares(app)
+
+
 
 @app.route('/')
 def index():
