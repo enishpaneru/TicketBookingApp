@@ -14,7 +14,9 @@ class ScreenAddView(MethodView):
     def post(self):
         screen = Screen_Layout()
         screen.name = request.json['name']
-        screen.client_id = ndb.Key('Client', request.json['client_id'])    # Later this is to be changed from value from token
+        user_id=request.environ['USER_ID']
+        client_id=user_id.detail_id
+        screen.client_id = client_id   
         screen.location = request.json['location']
         screen.max_rows = request.json['max_rows']
         screen.max_columns = request.json['max_columns']
@@ -46,12 +48,17 @@ class ScreenUpdateView(MethodView):
         pass
     
     def post(self):
+        # Got client ID from environ
+        user_id=request.environ['USER_ID']
+        client_id=user_id.detail_id
+        
+
         print request.json['id']
         screen = Screen_Layout.get_by_id(request.json['id'])
         screen.name = request.json['name']
-        client_id=screen.client_id.id()
+        prev_client_id=screen.client_id
         print client_id
-        if client_id!=request.json['client_id']:    # Later this is to be changed with token.
+        if prev_client_id!=client_id:    # Later this is to be changed with token.
             return jsonify({"code": 400,  "message": "Not authorized."})
         screen.location = request.json['location']
         
