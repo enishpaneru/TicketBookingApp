@@ -6,7 +6,7 @@ class User(ndb.Model):
     username = ndb.StringProperty()
     password = ndb.StringProperty()
     email = ndb.StringProperty()
-    contact = ndb.StringProperty()
+    contact = ndb.IntegerProperty()
     description = ndb.StringProperty()
     created_date=ndb.DateProperty()
     last_login=ndb.DateTimeProperty()

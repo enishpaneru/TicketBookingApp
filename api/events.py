@@ -86,3 +86,22 @@ class DetailShowView(MethodView):
             # seat_detail['price'] = seats_price[(seat['row'], seat['column'])]
             # seats_info.append(seat_detail)
         return jsonify({'show_id': show.key.id(), 'screen_max_row_col': screen_max_row_col, 'screen_seats': seats_info})
+
+
+
+class EventAddView(MethodView):
+    def get(self):
+        pass
+
+    def post(self):
+        event = Event()
+        # event.key = ndb.Key('Event',int(request.form['id']))
+        print '###################'
+        print request.is_json
+        print request.json
+        event.client_id = ndb.Key('Client', int(request.json['client_id']))
+        event.name = request.json['name']
+        event.description = request.json['description']
+        event.duration = int(request.json['duration'])
+        res = event.put()
+        return jsonify({'id': res.id(), 'message': "Success"})
