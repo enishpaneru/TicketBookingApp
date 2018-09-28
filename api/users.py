@@ -16,10 +16,12 @@ class UserRegisterView(MethodView):
         pass
 
     def post(self):
+        print '############################'
+        print request.json
         # Queries for initial Checks
-        USER_EXIST_QUERY = User.query(User.username == request.json['username'])
-        EMAIL_EXIST_QUERY = User.query(User.email == request.json['email'])
-        PHONE_EXIST_QUERY = User.query(User.contact == request.json['contact'])
+        USER_EXIST_QUERY=User.query(User.username==request.json['username'])
+        EMAIL_EXIST_QUERY=User.query(User.email==request.json['email'])
+        PHONE_EXIST_QUERY=User.query(User.contact==int(request.json['contact']))
         # Pre checks to check exisitng data.
         pre_check = {
             'USER_EXISTS': USER_EXIST_QUERY.fetch(),
@@ -41,15 +43,15 @@ class UserRegisterView(MethodView):
         else:
             print 'No User'
             # Add user credentials and minor info
-            user = User()
-            user.username = request.json['username']
-            user.password = generate_password_hash(request.json['password'])
-            user.email = request.json['email']
-            user.contact = request.json['contact']
-            user.description = request.json['description']
-            user.created_date = datetime.date.today()
-            user_type = User_Type.query(User_Type.name == 'User').fetch()
-            user.type_id = user_type[0].key
+            user=User()
+            user.username=request.json['username']
+            user.password=generate_password_hash(request.json['password'])
+            user.email=request.json['email']
+            user.contact=int(request.json['contact'])
+            user.description=request.json['description']
+            user.created_date=datetime.date.today()
+            user_type=User_Type.query(User_Type.name=='User').fetch()
+            user.type_id=user_type[0].key
 
             # Add a User detail
             user_detail = User_Detail()
@@ -114,15 +116,11 @@ class UserBuySeat(MethodView):
         pass
 
     def post(self):
-        # Get a show id and json array of seats from post data and complete book operation
-        # Incoming post data format:
-        # show_id=123123123
-        # seat_no={'seats': ["1-2","1-3"]}
-        id = int(request.json['show_id'])
-        seat_no = request.json['seat_no']  # JSON DECODE to dict
-        print(seat_no['seats'][0])
+        id=int(request.json['show_id'])
+        seat_no=request.json['seat_no']    # JSON DECODE to dict
+        
         show = Show.get_by_id(id)
-        for each in seat_no['seats']:  # For each item in seats check if seats exist and is available for booking.
+        for each in seat_no:  # For each item in seats check if seats exist and is available for booking.
             if show.seats.get(each):
                 if show.seats[each]['status'] == 4:
                     show.seats[each]['status'] = 1
@@ -145,9 +143,8 @@ class UserBookSeat(MethodView):
 
         id = int(request.json['show_id'])
         seat_no = request.json['seat_no']
-        print(seat_no['seats'][0])
         show = Show.get_by_id(id)
-        for each in seat_no['seats']:  # For each item in seats check if seats exist and is available for booking.
+        for each in seat_no:  # For each item in seats check if seats exist and is available for booking.
             if show.seats.get(each):
                 if show.seats[each]['status'] == 4:
                     show.seats[each]['status'] = 0

@@ -9,7 +9,7 @@ JWT_ALGORITHM = 'HS256'
 login_not_required_paths = ['/', '/events', '/events/[0-999999999999999999999]', '/events/*/shows', '/initdatafeed', '/login',
                             '/postevent',
                             '/postshow',
-                            '/postcategory', '/postclient', '/postprice', 'postscreen', 'postscreenman', '/postshowman']
+                            '/postcategory', '/postclient', '/postprice', 'postscreen', 'postscreenman', '/postshowman','/register/*']
 
 
 class LoggerMiddleware(object):

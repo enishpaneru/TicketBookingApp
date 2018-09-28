@@ -14,11 +14,14 @@ class ShowAddView(MethodView):
         pass
 
     def post(self):
+        
+        
         show = Show()
         # show.key=ndb.Key('Show', int(request.json['id']))
         show.event_id = ndb.Key('Event', int(request.json['event_id']))
         # We will have a user ID fetch client id from user ID.
         show.client_id = ndb.Key('Client', int(request.json['client_id']))
+
         show.screen_id = ndb.Key('Screen_Layout', int(request.json['screen_id']))
         show.name = request.json['name']
         show.datetime=datetime.strptime(request.json['datetime'], "%Y-%m-%d %I:%M %p")
