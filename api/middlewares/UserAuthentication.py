@@ -11,6 +11,7 @@ login_not_required_paths = ['/', '/events', '/events/[0-999999999999999999999]',
                             '/postshow',
                             '/postcategory', '/postclient', '/postprice', 'postscreen', 'postscreenman', '/postshowman']
 
+
 class LoggerMiddleware(object):
     def __init__(self, app):
         self.app = app
@@ -67,5 +68,3 @@ def check_user_permission(user_id, path):
         return False
 
 
-a = create_user_token(1, 99999999)
-print a
