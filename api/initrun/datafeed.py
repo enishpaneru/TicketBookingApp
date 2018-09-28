@@ -8,6 +8,8 @@ from models.event import Event
 from models.price import Price
 from models.screen_layout import Screen_Layout
 from models.show import Show
+from models.user import User
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 def InitDataFeed():
@@ -17,6 +19,7 @@ def InitDataFeed():
     create_shows()
     create_categories()
     create_prices()
+    create_users()
     return 'Success'
 
 
@@ -68,23 +71,20 @@ def create_shows():
     show1 = Show(id=1, event_id=ndb.Key(Event, 1), client_id=ndb.Key(Client, 12345),
                  screen_id=ndb.Key(Screen_Layout, 1),
                  datetime=datetime.strptime("2018-09-24 12:00:00.0", '%Y-%m-%d %H:%M:%S.%f'),
-                 seats=[{'row': 1, 'column': 1, 'status': 4}, {'row': 1, 'column': 2, 'status': 4},
-                        {'row': 2, 'column': 1, 'status': 4}, {'row': 2, 'column': 2, 'status': 4}])
+                 seats={'1-1': {'status': 4}, '1-2': {'status': 4}, '2-1': {'status': 4}, '2-2': {'status': 4}})
     show2 = Show(id=2, event_id=ndb.Key(Event, 2), client_id=ndb.Key(Client, 12345),
                  screen_id=ndb.Key(Screen_Layout, 2),
                  datetime=datetime.strptime("2018-09-20 12:00:00.0", '%Y-%m-%d %H:%M:%S.%f'),
-                 seats=[{'row': 1, 'column': 1, 'status': 4}, {'row': 1, 'column': 2, 'status': 4},
-                        {'row': 2, 'column': 1, 'status': 4}, {'row': 2, 'column': 2, 'status': 4}])
+                 seats={'1-1': {'status': 4}, '1-2': {'status': 4}, '2-1': {'status': 4}, '2-2': {'status': 4}})
+
     show3 = Show(id=3, event_id=ndb.Key(Event, 4), client_id=ndb.Key(Client, 123456),
                  screen_id=ndb.Key(Screen_Layout, 3),
                  datetime=datetime.strptime("2018-09-20 12:00:00.0", '%Y-%m-%d %H:%M:%S.%f'),
-                 seats=[{'row': 1, 'column': 1, 'status': 4}, {'row': 1, 'column': 2, 'status': 4},
-                        {'row': 2, 'column': 1, 'status': 4}, {'row': 2, 'column': 2, 'status': 4}])
+                 seats={'1-1': {'status': 4}, '1-2': {'status': 4}, '2-1': {'status': 4}, '2-2': {'status': 4}})
     show4 = Show(id=4, event_id=ndb.Key(Event, 3), client_id=ndb.Key(Client, 123456),
                  screen_id=ndb.Key(Screen_Layout, 4),
                  datetime=datetime.strptime("2018-09-20 12:00:00.0", '%Y-%m-%d %H:%M:%S.%f'),
-                 seats=[{'row': 1, 'column': 1, 'status': 4}, {'row': 1, 'column': 2, 'status': 4},
-                        {'row': 2, 'column': 1, 'status': 4}, {'row': 2, 'column': 2, 'status': 4}])
+                 seats={'1-1': {'status': 4}, '1-2': {'status': 4}, '2-1': {'status': 4}, '2-2': {'status': 4}})
     ndb.put_multi([show1, show2, show3, show4])
 
 
@@ -112,3 +112,7 @@ def create_prices():
     price4 = Price(id=4, show_id=ndb.Key(Show, 3), category_id=ndb.Key(Category, 4), amount=200)
     price5 = Price(id=5, show_id=ndb.Key(Show, 4), category_id=ndb.Key(Category, 4), amount=1000)
     ndb.put_multi([price1, price2, price3, price4, price5])
+
+
+def create_users():
+    user1 = User(id=1, username="enish", password=generate_password_hash("paneru"))

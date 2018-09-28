@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect,url_for
 from api.urls import app_add_urls
 import datetime
 from api.middlewares import UserAuthentication
@@ -14,5 +14,4 @@ app = add_middlewares(app)
 
 @app.route('/')
 def index():
-    print datetime.datetime.today()
-    return render_template('index.html')
+    return redirect(url_for('event_list'))

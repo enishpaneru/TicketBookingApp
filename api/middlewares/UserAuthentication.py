@@ -1,13 +1,14 @@
 import fnmatch, datetime
-from flask import redirect, url_for
 import jwt
-from flask import jsonify
+from google.appengine.ext import ndb
+from models.user import User
 
 JWT_SECRET = 'secret'
 JWT_ALGORITHM = 'HS256'
 
-login_required_paths = ['/events/*/shows/*']
-relogin_path = "/events"
+login_not_required_paths = ['/events', '/events/[0-9]*', '/events/*/shows', '/initdatafeed', '/login', '/postevent',
+                            '/postshow',
+                            '/postcategory', '/postclient', '/postprice', 'postscreen', 'postscreenman', '/postshowman']
 
 
 class LoggerMiddleware(object):
@@ -15,22 +16,28 @@ class LoggerMiddleware(object):
         self.app = app
 
     def __call__(self, environ, start_response):
-        for path in login_required_paths:
+        for path in login_not_required_paths:
             if fnmatch.fnmatch(environ['PATH_INFO'], path):
-                if 'HTTP_USER_TOKEN' in environ:
-                    jwt_token = environ['HTTP_USER_TOKEN']
-                    try:
-                        payload = jwt.decode(jwt_token, JWT_SECRET,
-                                             algorithms=[JWT_ALGORITHM])
-                        environ['USER_ID'] = payload['user_id']
-                    except (jwt.DecodeError, jwt.ExpiredSignatureError):
-                        start_response('302 Found', [('Location', relogin_path)])
-                        return '1'
-                else:
-                    start_response('302 Found', [('Location', relogin_path)])
-                    return '1'
-
-        return self.app(environ, start_response)
+                print "open path"
+                return self.app(environ, start_response)
+        print "closed path"
+        print environ['PATH_INFO']
+        if 'HTTP_USER_TOKEN' in environ:
+            jwt_token = environ['HTTP_USER_TOKEN']
+            try:
+                payload = jwt.decode(jwt_token, JWT_SECRET,
+                                     algorithms=[JWT_ALGORITHM])
+                environ['USER_ID'] = ndb.Key(User, int(payload['user_id']))
+                # if not check_user_permission(environ['USER_ID'],environ['PATH_INFO']):
+                #     start_response('302 Found', [('Location', relogin_path)])
+                #     return '1'
+                return self.app(environ, start_response)
+            except (jwt.DecodeError, jwt.ExpiredSignatureError):
+                start_response('401 Unauthorized', [])
+                return {'code': 401, "message": "User not authorised"}
+        else:
+            start_response('401 Unauthorized', [])
+            return {'code': 401, "message": "User not authorised"}
 
 
 def create_user_token(user_id, JWT_EXP_DELTA_SECONDS):
@@ -46,6 +53,19 @@ def check_user_token(jwt_token):
     try:
         payload = jwt.decode(jwt_token, JWT_SECRET,
                              algorithms=[JWT_ALGORITHM])
-        return payload['user_id']
+        return int(payload['user_id'])
     except (jwt.DecodeError, jwt.ExpiredSignatureError):
         return False
+
+
+def check_user_permission(user_id, path):
+    user_type_id = user_id.get().user_type
+    user_type = user_type_id.get()
+    if path in user_type.permissions.values():
+        return True
+    else:
+        return False
+
+
+a = create_user_token(1, 99999999)
+print a
