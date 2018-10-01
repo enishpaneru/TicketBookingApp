@@ -85,8 +85,8 @@ class DetailShowView(MethodView):
                 'price': seats_price[(row, column)], 'status': description['status']}
             # seat_detail['price'] = seats_price[(seat['row'], seat['column'])]
             # seats_info.append(seat_detail)
+        print "now here"
         return jsonify({'show_id': show.key.id(), 'screen_max_row_col': screen_max_row_col, 'screen_seats': seats_info})
-
 
 
 class EventAddView(MethodView):
