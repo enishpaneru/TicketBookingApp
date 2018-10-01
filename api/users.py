@@ -5,7 +5,9 @@ from models.user import User
 from models.user_type import User_Type
 from models.user_detail import User_Detail
 from models.show import Show
+from models.ticket 
 from werkzeug.security import generate_password_hash, check_password_hash
+
 import datetime, json
 
 from middlewares.UserAuthentication import create_user_token
