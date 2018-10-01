@@ -1,16 +1,13 @@
-from events import ListEventView, ListEventShowView, DetailShowView, EventDetailView
-from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView, ScreenViewManual, \
-    ShowViewManual
-from events import ListEventView, ListEventShowView, DetailShowView, EventAddView
+from events import ListEventView, ListEventShowView, DetailShowView, EventAddView,EventDetailView
 from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView, ScreenViewManual, \
     ShowViewManual
 from users import UserRegisterView, UserTypeView, UserLoginView, UserBuySeat, UserBookSeat
 from api.seats import change_seat_availability
 from initrun.datafeed import InitDataFeed
 from clients import ClientAdditionView, ClientRegisterView, ListClientEvent, ListClientScreens, ListClientScreenCategory
-from clients import ClientAdditionView, ClientRegisterView
 from shows import ShowAddView, ShowUpdateView, ShowDeleteMethod
 from screens import ScreenAddView, ScreenUpdateView, ScreenDeleteMethod
+from api.tickets import ListTicketView, DetailTicketView
 
 
 def app_add_urls(app):
@@ -22,6 +19,7 @@ def app_add_urls(app):
     app = add_client_rules(app)
     app = add_shows_rule(app)
     app = add_screens_rule(app)
+    app = add_ticket_rule(app)
     return app
 
 
@@ -91,6 +89,11 @@ def add_dummy_rule(app):
     app.add_url_rule('/seatstatus', 'Change Seat Status', change_seat_availability, methods=['post'])
     return app
 
+
+def add_ticket_rule(app):
+    app.add_url_rule('/tickets', view_func=ListTicketView.as_view('LIST_USER_TICKETS'), methods=['get', 'post'])
+    app.add_url_rule('/tickets/<ticket_id>', view_func=DetailTicketView.as_view('TICKET_DETAIL'), methods=['get', 'post'])
+    return app
 
 def add_initrun_rule(app):
     app.add_url_rule('/initdatafeed', "initialdatafeed", InitDataFeed)

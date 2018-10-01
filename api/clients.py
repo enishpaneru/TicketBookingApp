@@ -39,22 +39,10 @@ class ClientRegisterView(MethodView):
             user.contact = request.form['contact']
             user.description = request.form['description']
             user.created_date = datetime.date.today()
-            user_type = User_Type.query(User_Type.name == 'User').fetch()
-            user.type_id = user_type[0].key
+            user_type = User_Type.query(User_Type.name == 'Client').get()
+            user.type_id = user_type.key
 
-            # Add a User detail
-            user_detail = User_Detail()
-            user_detail.first_name = request.form['first_name']
-            user_detail.middle_name = request.form['middle_name']
-            user_detail.last_name = request.form['last_name']
-            user_detail.location = request.form['location']
-            print type(request.form['dob'].encode('ascii', 'ignore'))
-            user_detail.dob = datetime.datetime.strptime(request.form['dob'], "%d/%m/%Y").date()
-            user_detail_key = user_detail.put()
-
-            # Adding a key in userdetail
-
-            user.detail_id = user_detail_key
+            user.detail_id = ndb.Key(Client, client_id)
             res = user.put()
 
             if res:
