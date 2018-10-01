@@ -16,7 +16,7 @@ class ShowAddView(MethodView):
     def post(self):
          # Got client ID from environ
         user_id=request.environ['USER_ID']
-        client_id=user_id.detail_id
+        client_id=user_id.get().detail_id
         
         show = Show()
         show.event_id = ndb.Key('Event', int(request.json['event_id']))
@@ -57,7 +57,7 @@ class ShowUpdateView(MethodView):
     def post(self):
 
         user_id=request.environ['USER_ID']
-        client_id=user_id.detail_id
+        client_id=user_id.get().detail_id
 
         show = Show.get_by_id(request.json['id'])
         if not show:
