@@ -42,9 +42,7 @@ class ClientRegisterView(MethodView):
             user_type = User_Type.query(User_Type.name == 'Client').get()
             user.type_id = user_type.key
 
-            # Adding a key in userdetail
-
-            user.detail_id = client_id
+            user.detail_id = ndb.Key(Client, client_id)
             res = user.put()
 
             if res:
