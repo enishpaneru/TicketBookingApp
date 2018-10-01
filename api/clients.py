@@ -94,10 +94,10 @@ class ListClientEvent(MethodView):
         print request.environ['USER_ID']
         client_id = user_id.get().detail_id
         events = Event.query(Event.client_id == client_id).fetch()
-        events_list = {}
+        events_list = []
         for event in events:
-            events_list[event.key.id()] = {"name": event.name, "duration": event.duration,
-                                           "description": event.description}
+            events_list.append({"id": event.key.id(), "name": event.name, "duration": event.duration,
+                                "description": event.description})
         return jsonify(events_list)
 
 
@@ -106,9 +106,9 @@ class ListClientScreens(MethodView):
         user_id = request.environ['USER_ID']
         client_id = user_id.get().detail_id
         screens = Screen_Layout.query(Screen_Layout.client_id == client_id).fetch()
-        screen_list = {}
+        screen_list = []
         for screen in screens:
-            screen_list[screen.key.id()] = {"name": screen.name, "location": screen.location}
+            screen_list.append({"id": screen.key.id(), "name": screen.name, "location": screen.location})
         return jsonify(screen_list)
 
 
@@ -117,7 +117,7 @@ class ListClientScreenCategory(MethodView):
         screen_id = ndb.Key(Screen_Layout, int(screen_id))
         categories = Category.query(Category.screen_id == screen_id).fetch()
 
-        category_list = {}
+        category_list = []
         for category in categories:
-            category_list[category.key.id()] = {'name': category.name}
+            category_list.append({"id": category.key.id(), 'name': category.name})
         return jsonify(category_list)
