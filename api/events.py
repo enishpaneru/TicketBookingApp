@@ -60,6 +60,7 @@ class ListEventShowView(MethodView):
 
 class DetailShowView(MethodView):
     def get(self, event_id, show_id):
+        print request.headers
         event_id = int(event_id)
         show_id = int(show_id)
         show = ndb.Key(Show, show_id).get()
@@ -99,7 +100,8 @@ class EventAddView(MethodView):
         print '###################'
         print request.is_json
         print request.json
-        event.client_id = ndb.Key('Client', int(request.json['client_id']))
+        user_id=request.environ['USER_ID']
+        event.client_id = user_id.get().detail_id
         event.name = request.json['name']
         event.description = request.json['description']
         event.duration = int(request.json['duration'])

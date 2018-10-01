@@ -1,7 +1,7 @@
 from events import ListEventView, ListEventShowView, DetailShowView, EventAddView,EventDetailView
 from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, ScreenView, ScreenViewManual, \
     ShowViewManual
-from users import UserRegisterView, UserTypeView, UserLoginView, UserBuySeat, UserBookSeat
+from users import UserRegisterView, UserTypeView, UserLoginView, UserBuySeat, UserBookSeat, UserDetail
 from api.seats import change_seat_availability
 from initrun.datafeed import InitDataFeed
 from clients import ClientAdditionView, ClientRegisterView, ListClientEvent, ListClientScreens, ListClientScreenCategory

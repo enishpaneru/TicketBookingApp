@@ -14,14 +14,13 @@ class ShowAddView(MethodView):
         pass
 
     def post(self):
-        
+         # Got client ID from environ
+        user_id=request.environ['USER_ID']
+        client_id=user_id.detail_id
         
         show = Show()
-        # show.key=ndb.Key('Show', int(request.json['id']))
         show.event_id = ndb.Key('Event', int(request.json['event_id']))
-        # We will have a user ID fetch client id from user ID.
-        show.client_id = ndb.Key('Client', int(request.json['client_id']))
-
+        show.client_id = client_id      # Fetched from the environ values.
         show.screen_id = ndb.Key('Screen_Layout', int(request.json['screen_id']))
         show.name = request.json['name']
         show.datetime=datetime.strptime(request.json['datetime'], "%Y-%m-%d %I:%M %p")
@@ -56,11 +55,15 @@ class ShowUpdateView(MethodView):
         pass
 
     def post(self):
+
+        user_id=request.environ['USER_ID']
+        client_id=user_id.detail_id
+
         show = Show.get_by_id(request.json['id'])
         if not show:
                 return jsonify({"code":404, "message":"Show Not found."})   
-        # user=request.environ['USER_ID'].get()
-        client_id=ndb.Key('Client',request.json['client_id'])
+        
+        
         # Check if the user is authorized to edit.
         if client_id!=show.client_id:
             return jsonify({"code": 400,  "message": "Not authorized."})

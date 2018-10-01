@@ -5,7 +5,11 @@ from models.user import User
 from models.user_type import User_Type
 from models.user_detail import User_Detail
 from models.show import Show
+from models.ticket import Ticket
+from models.category import Category
+from models.price import Price
 from werkzeug.security import generate_password_hash, check_password_hash
+
 import datetime, json
 
 from middlewares.UserAuthentication import create_user_token
@@ -113,8 +117,8 @@ class UserBuySeat(MethodView):
     def get(self):
         pass
 
-    def post(self):
-        id=int(request.json['show_id'])
+    def post(self, event_id, show_id):
+        id=int(show_id)
         seat_no=request.json['seat_no']    # JSON DECODE to dict
         
         show = Show.get_by_id(id)
@@ -128,18 +132,37 @@ class UserBuySeat(MethodView):
             else:
                 return jsonify({'status': 404, 'message': "Seat no. " + each + " not found."})
         res = show.put()
-        print(res.get().seats)
-        return jsonify({'status': 200, 'message': "Seat successfully bought."})
+
+
+        seat_list=[]
+        for seat in seat_no:
+            row, col=seat.split('-')
+            seat_list.append({'row':int(row),'column':int(col)})
+        # ticket.
+        #for price
+        screen_id=show.screen_id
+        categories=Category.query(Category.screen_id==screen_id).fetch()
+        total_price=0
+        for category in categories:
+            for each_seat in seat_list:
+                for seat in category.seats:
+                    if seat['row']==each_seat['row'] and seat['column']==each_seat['column']:
+                        total_price+= Price.query(Price.show_id==show.key,Price.category_id==category.key).get().amount
+                        continue
+
+        ticket = Ticket(seats=seat_list,total_price=total_price,user_id=request.environ['USER_ID'],show_id=show.key,issued_datetime=datetime.datetime.now())
+        res=ticket.put()
+        return jsonify({'status': 200, "ticket_id": res.id(), 'message': "Seat successfully bought."})
 
 
 class UserBookSeat(MethodView):
     def get(self):
         pass
 
-    def post(self):
+    def post(self, event_id, show_id):
         # Get a show id and json array of seats from post data and complete book operation
 
-        id = int(request.json['show_id'])
+        id=int(show_id)
         seat_no = request.json['seat_no']
         show = Show.get_by_id(id)
         for each in seat_no:  # For each item in seats check if seats exist and is available for booking.
@@ -154,3 +177,32 @@ class UserBookSeat(MethodView):
         res = show.put()
         print(res.get().seats)
         return jsonify({'status': 200, 'message': "Seat successfully booked."})
+
+
+def UserDetail(username):
+    query=User.query().filter(User.username==str(username)).fetch()
+    
+    
+    print query
+    if query:
+        detail=query[0].detail_id.get()
+
+        return jsonify({
+            'status': 200,
+            'data': {
+                "first_name": detail.first_name,
+                "middle_name": detail.middle_name,
+                "last_name": detail.last_name,
+                "location": detail.location,
+                "dob":detail.dob,
+                "email": query[0].email,
+                "contact": query[0].contact,
+                "description": query[0].description
+
+
+            }
+        })
+    # query = User.query(User.username == request.json['username']).fetch()
+
+    else:
+        return jsonify({"status": 404, "message":"Not found"})

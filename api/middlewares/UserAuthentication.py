@@ -2,6 +2,8 @@ import fnmatch, datetime
 import jwt
 from google.appengine.ext import ndb
 from models.user import User
+from cgi import parse_qs
+from flask_cors import cross_origin
 
 JWT_SECRET = 'secret'
 JWT_ALGORITHM = 'HS256'
@@ -18,6 +20,7 @@ class LoggerMiddleware(object):
     def __init__(self, app):
         self.app = app
 
+    
     def __call__(self, environ, start_response):
 
         if environ['REQUEST_METHOD'] == "OPTIONS":
@@ -30,6 +33,7 @@ class LoggerMiddleware(object):
         print "closed path"
         if 'HTTP_USER_TOKEN' in environ:
             jwt_token = environ['HTTP_USER_TOKEN']
+            print "here"
             try:
                 payload = jwt.decode(jwt_token, JWT_SECRET,
                                      algorithms=[JWT_ALGORITHM])
