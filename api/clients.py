@@ -126,8 +126,9 @@ class ListClientScreens(MethodView):
 
 class ListClientScreenCategory(MethodView):
     def get(self, screen_id):
-        screen_id = ndb.Key(Screen_Layout, screen_id)
+        screen_id = ndb.Key(Screen_Layout, int(screen_id))
         categories = Category.query(Category.screen_id == screen_id).fetch()
+
         category_list = {}
         for category in categories:
             category_list[category.key.id()] = {'name': category.name}

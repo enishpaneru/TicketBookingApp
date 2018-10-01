@@ -41,7 +41,6 @@ class UserRegisterView(MethodView):
         if errors:
             return jsonify({'status': 400, 'message': errors})
         else:
-            print 'No User'
             # Add user credentials and minor info
             user=User()
             user.username=request.json['username']
@@ -49,8 +48,8 @@ class UserRegisterView(MethodView):
             user.email=request.json['email']
             user.contact=int(request.json['contact'])
             user.description=request.json['description']
-            user.created_date=datetime.date.today()
-            user_type=User_Type.query(User_Type.name=='User').fetch()
+            user.created_date=datetime.datetime.today()
+            user_type=User_Type.query(User_Type.name=='General').fetch()
             user.type_id=user_type[0].key
 
             # Add a User detail
@@ -59,7 +58,6 @@ class UserRegisterView(MethodView):
             user_detail.middle_name = request.json['middle_name']
             user_detail.last_name = request.json['last_name']
             user_detail.location = request.json['location']
-            print type(request.json['dob'].encode('ascii', 'ignore'))
             user_detail.dob = datetime.datetime.strptime(request.json['dob'], "%d/%m/%Y").date()
             user_detail_key = user_detail.put()
 

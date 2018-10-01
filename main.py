@@ -5,6 +5,7 @@ from api.middlewares import UserAuthentication
 from flask_cors import CORS
 
 def add_middlewares(app):
+    print "###"
     app.wsgi_app = UserAuthentication.LoggerMiddleware(app.wsgi_app)
     return app
 
@@ -14,6 +15,7 @@ CORS(app)
 
 app = app_add_urls(app)
 app = add_middlewares(app)
+a=app.wsgi_app
 
 
 
