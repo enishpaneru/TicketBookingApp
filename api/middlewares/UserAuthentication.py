@@ -33,6 +33,7 @@ class LoggerMiddleware(object):
         print "closed path"
         if 'HTTP_USER_TOKEN' in environ:
             jwt_token = environ['HTTP_USER_TOKEN']
+            print "here"
             try:
                 payload = jwt.decode(jwt_token, JWT_SECRET,
                                      algorithms=[JWT_ALGORITHM])

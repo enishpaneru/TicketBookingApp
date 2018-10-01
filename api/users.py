@@ -113,8 +113,8 @@ class UserBuySeat(MethodView):
     def get(self):
         pass
 
-    def post(self):
-        id=int(request.json['show_id'])
+    def post(self, event_id, show_id):
+        id=int(show_id)
         seat_no=request.json['seat_no']    # JSON DECODE to dict
         
         show = Show.get_by_id(id)
@@ -136,10 +136,10 @@ class UserBookSeat(MethodView):
     def get(self):
         pass
 
-    def post(self):
+    def post(self, event_id, show_id):
         # Get a show id and json array of seats from post data and complete book operation
 
-        id = int(request.json['show_id'])
+        id=int(show_id)
         seat_no = request.json['seat_no']
         show = Show.get_by_id(id)
         for each in seat_no:  # For each item in seats check if seats exist and is available for booking.
