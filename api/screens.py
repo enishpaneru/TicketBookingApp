@@ -15,7 +15,7 @@ class ScreenAddView(MethodView):
         screen = Screen_Layout()
         screen.name = request.json['name']
         user_id=request.environ['USER_ID']
-        client_id=user_id.detail_id
+        client_id=user_id.get().detail_id
         screen.client_id = client_id   
         screen.location = request.json['location']
         screen.max_rows = request.json['max_rows']
@@ -50,7 +50,7 @@ class ScreenUpdateView(MethodView):
     def post(self):
         # Got client ID from environ
         user_id=request.environ['USER_ID']
-        client_id=user_id.detail_id
+        client_id=user_id.get().detail_id
         
 
         print request.json['id']

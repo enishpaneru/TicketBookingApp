@@ -152,7 +152,7 @@ class UserBuySeat(MethodView):
 
         ticket = Ticket(seats=seat_list,total_price=total_price,user_id=request.environ['USER_ID'],show_id=show.key,issued_datetime=datetime.datetime.now())
         res=ticket.put()
-        return jsonify({'status': 200, "ticket_id": res.id(), 'message': "Seat successfully bought."})
+        return jsonify({'status': 200, "ticket_id": res.id(), "seats": seat_no,'message': "Seat successfully bought."})
 
 
 class UserBookSeat(MethodView):
