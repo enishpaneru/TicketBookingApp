@@ -4,7 +4,7 @@ from api.dummy import EventView, ShowView, CategoryView, ClientView, PriceView, 
 from users import UserRegisterView, UserTypeView, UserLoginView, UserBuySeat, UserBookSeat, UserDetail
 from api.seats import change_seat_availability
 from initrun.datafeed import InitDataFeed
-from clients import ClientAdditionView, ClientRegisterView, ListClientEvent, ListClientScreens, ListClientScreenCategory
+from clients import ClientAdditionView, ClientRegisterView, ListClientEvent, ListClientScreens, ListClientScreenCategory,ListClientShows,ClientDetail
 from shows import ShowAddView, ShowUpdateView, ShowDeleteMethod
 from screens import ScreenAddView, ScreenUpdateView, ScreenDeleteMethod
 from api.tickets import ListTicketView, DetailTicketView
@@ -59,6 +59,8 @@ def add_user_rules(app):
                      methods=['post'])
     app.add_url_rule('/events/<event_id>/shows/<show_id>/bookseat', view_func=UserBookSeat.as_view('BOOK_SEAT_VIEW'),
                      methods=['post'])
+    app.add_url_rule('/profile', view_func=UserDetail.as_view('USER_DETAIL_VIEW'), methods=['get'])
+
     return app
 
 
@@ -69,6 +71,9 @@ def add_client_rules(app):
                      methods=['get'])
     app.add_url_rule('/client/listscreens/<screen_id>/categories',
                      view_func=ListClientScreenCategory.as_view('LIST_CLIENT_SCREEN_CATEGORY_VIEW'), methods=['get'])
+    app.add_url_rule('/client/listshows', view_func=ListClientShows.as_view('LIST_CLIENT_SHOW_VIEW'), methods=['get'])
+    app.add_url_rule('/client/profile', view_func=ClientDetail.as_view('CLIENT_DETAIL_VIEW'), methods=['get'])
+
     return app
 
 

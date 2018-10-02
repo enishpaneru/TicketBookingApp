@@ -12,6 +12,7 @@ from Mail import MailService
 from middlewares.UserAuthentication import create_user_token, check_user_token
 from models.screen_layout import Screen_Layout
 from models.category import Category
+from models.show import Show
 
 
 class ClientRegisterView(MethodView):
@@ -122,3 +123,34 @@ class ListClientScreenCategory(MethodView):
         for category in categories:
             category_list.append({"id": category.key.id(), 'name': category.name})
         return jsonify(category_list)
+
+
+class ListClientShows(MethodView):
+    def get(self):
+        user_id = request.environ['USER_ID']
+        client_id = user_id.get().detail_id
+        shows = Show.query(Show.client_id == client_id)
+        shows_list = []
+        for show in shows:
+            event_name = show.event_id.get().name
+            screen_name = show.screen_id.get().name
+            shows_list.append({"event_name": event_name, 'screen_name': screen_name, "datetime": show.datetime})
+        return jsonify(shows_list)
+
+
+class ClientDetail(MethodView):
+    def get(self):
+        user_id = request.environ['USER_ID']
+        user = user_id.get()
+        client = user.detail_id.get()
+
+        user_name = user.username
+        email = user.email
+        contact = user.contact
+        description = user.description
+
+        client_name = client.name
+        client_description = client.description
+
+        return jsonify({'user_name': user_name, 'email': email, 'contact': contact, 'description': description,
+                        'client_name': client_name, 'client_description': client_description})
