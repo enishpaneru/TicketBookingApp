@@ -36,8 +36,10 @@ class ShowAddView(MethodView):
         # Creating a price for each request
         try:
             for each in categories_price:
-                price = Price(show_id=show.screen_id, category_id=ndb.Key('Category', each['category']),
+                price = Price(show_id=show.screen_id, category_id=ndb.Key('Category', int(each['category'])),
                               amount=int(each['price']))
+                print '########'
+                print type(price.category_id.id())
                 price.put()
             res = show.put()
         except:
