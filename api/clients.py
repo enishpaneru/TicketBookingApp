@@ -12,6 +12,7 @@ from Mail import MailService
 from middlewares.UserAuthentication import create_user_token, check_user_token
 from models.screen_layout import Screen_Layout
 from models.category import Category
+from models.show import Show
 
 
 class ClientRegisterView(MethodView):
@@ -19,26 +20,28 @@ class ClientRegisterView(MethodView):
         pass
 
     def post(self):
-        query = User.query(User.username == request.form['username']).fetch()
+        print "hello"
+        query = User.query(User.username == request.json['username']).fetch()
         if query:
-            return jsonify({'id': query[0].username, 'message': "Username Exists please use another username"})
+            return jsonify({"status":409,'id': query[0].username, 'message': "Username Exists please use another username"})
         else:
 
             # check the association and validity of the client create account token
             client_id = self.check_client_token(request.headers)
             if not client_id:
                 return jsonify(
-                    {"status": 500,
+                    {"status": 401,
                      'message': "Token validation gone wrong please request a new registration link from the admins"})
 
             # Add user credentials and minor info
+            print client_id
             user = User()
-            user.username = request.form['username']
-            user.password = generate_password_hash(request.form['password'])
-            user.email = request.form['email']
-            user.contact = request.form['contact']
-            user.description = request.form['description']
-            user.created_date = datetime.date.today()
+            user.username = request.json['username']
+            user.password = generate_password_hash(request.json['password'])
+            user.email = request.json['email']
+            user.contact = int(request.json['contact'])
+            user.description = request.json['description']
+            user.created_date = datetime.datetime.today()
             user_type = User_Type.query(User_Type.name == 'Client').get()
             user.type_id = user_type.key
 
@@ -69,7 +72,7 @@ class ClientAdditionView(MethodView):
 
     def send_mail(self, client_id, client_name, client_email):
         client_token = create_user_token(client_id, self.link_expiry_period)
-        account_create_url = "http://127.0.0.1:8000/client/register/" + client_token
+        account_create_url = "https://ticketbooking-12.firebaseapp.com/register/client/" + client_token
         msg_body = "Hello" + client_name + "\n" + "click here to create your account \n" + account_create_url
         new_mail = MailService(self.mail_subject, self.mail_sender, client_email, msg_body)
         result = new_mail.send_mail()
@@ -122,3 +125,34 @@ class ListClientScreenCategory(MethodView):
         for category in categories:
             category_list.append({"id": category.key.id(), 'name': category.name})
         return jsonify(category_list)
+
+
+class ListClientShows(MethodView):
+    def get(self):
+        user_id = request.environ['USER_ID']
+        client_id = user_id.get().detail_id
+        shows = Show.query(Show.client_id == client_id)
+        shows_list = []
+        for show in shows:
+            event_name = show.event_id.get().name
+            screen_name = show.screen_id.get().name
+            shows_list.append({"event_name": event_name, 'screen_name': screen_name, "datetime": show.datetime})
+        return jsonify(shows_list)
+
+
+class ClientDetail(MethodView):
+    def get(self):
+        user_id = request.environ['USER_ID']
+        user = user_id.get()
+        client = user.detail_id.get()
+
+        user_name = user.username
+        email = user.email
+        contact = user.contact
+        description = user.description
+
+        client_name = client.name
+        client_description = client.description
+
+        return jsonify({'user_name': user_name, 'email': email, 'contact': contact, 'description': description,
+                        'client_name': client_name, 'client_description': client_description})
