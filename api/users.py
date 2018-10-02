@@ -84,8 +84,9 @@ class UserLoginView(MethodView):
         if query:
             password_check = check_password_hash(query[0].password, request.json['password'])
             if password_check:
+                user_kind=query[0].type_id.get().name
                 return jsonify({'id': query[0].username, 'token': create_user_token(query[0].key.id(), 86400),
-                                'message': "User has been successfully Logged in."})
+                                'message': "User has been successfully Logged in.","user_kind":user_kind})
             else:
                 return jsonify({'id': query[0].username, 'message': "Password does not match."})
         else:

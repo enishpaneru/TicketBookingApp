@@ -20,26 +20,28 @@ class ClientRegisterView(MethodView):
         pass
 
     def post(self):
-        query = User.query(User.username == request.form['username']).fetch()
+        print "hello"
+        query = User.query(User.username == request.json['username']).fetch()
         if query:
-            return jsonify({'id': query[0].username, 'message': "Username Exists please use another username"})
+            return jsonify({"status":409,'id': query[0].username, 'message': "Username Exists please use another username"})
         else:
 
             # check the association and validity of the client create account token
             client_id = self.check_client_token(request.headers)
             if not client_id:
                 return jsonify(
-                    {"status": 500,
+                    {"status": 401,
                      'message': "Token validation gone wrong please request a new registration link from the admins"})
 
             # Add user credentials and minor info
+            print client_id
             user = User()
-            user.username = request.form['username']
-            user.password = generate_password_hash(request.form['password'])
-            user.email = request.form['email']
-            user.contact = request.form['contact']
-            user.description = request.form['description']
-            user.created_date = datetime.date.today()
+            user.username = request.json['username']
+            user.password = generate_password_hash(request.json['password'])
+            user.email = request.json['email']
+            user.contact = int(request.json['contact'])
+            user.description = request.json['description']
+            user.created_date = datetime.datetime.today()
             user_type = User_Type.query(User_Type.name == 'Client').get()
             user.type_id = user_type.key
 
@@ -70,7 +72,7 @@ class ClientAdditionView(MethodView):
 
     def send_mail(self, client_id, client_name, client_email):
         client_token = create_user_token(client_id, self.link_expiry_period)
-        account_create_url = "http://127.0.0.1:8000/client/register/" + client_token
+        account_create_url = "https://ticketbooking-12.firebaseapp.com/register/client/" + client_token
         msg_body = "Hello" + client_name + "\n" + "click here to create your account \n" + account_create_url
         new_mail = MailService(self.mail_subject, self.mail_sender, client_email, msg_body)
         result = new_mail.send_mail()

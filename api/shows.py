@@ -23,7 +23,7 @@ class ShowAddView(MethodView):
         show.event_id = ndb.Key('Event', int(request.json['event_id']))
         show.client_id = client_id  # Fetched from the environ values.
         show.screen_id = ndb.Key('Screen_Layout', int(request.json['screen_id']))
-        show.datetime = datetime.strptime(request.json['datetime'], "%Y-%m-%d %H:%M")
+        show.datetime = datetime.strptime(request.json['datetime'], "%d-%m-%Y %H:%M")
         screen = ndb.Key('Screen_Layout', int(request.json['screen_id']))
         seats = screen.get().seats
         updated_seats = {}
