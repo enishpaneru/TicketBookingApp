@@ -1,5 +1,6 @@
 __pycache__/
 env/
+venv/
 .vscode/
 .idea/
 *.pyc
@@ -7,4 +8,4 @@ models/*.pyc
 api/*.pyc
 static/*.pyc
 templates/*.pyc
-git 
+git
