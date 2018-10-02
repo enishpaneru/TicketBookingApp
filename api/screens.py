@@ -27,7 +27,6 @@ class ScreenAddView(MethodView):
         # Fetch seat categories
         categories = request.json['categories']
         print categories
-<<<<<<< HEAD
         
         for each in categories:
             category=Category()
@@ -45,28 +44,11 @@ class ScreenAddView(MethodView):
         screen=res.get()    # Adding seats for the screen fetched from categories
         screen.seats=seats
         res=screen.put()
-        data=res.get()
-        print data.seats
-        return jsonify({"code": 200, "id":res.id(), 'data':data, "message": "Success"})
+               
+        return jsonify({"code": 200, "id":res.id(),  "message": "Success"})
         # except Exception as e:
         print e
         return jsonify({"code":500, "message":"server is error"})
-=======
-        try:
-            for each in categories:
-                category = Category()
-                category.screen_id = res
-                category.name = each['name']
-                category.seats = each['seats']
-                map(lambda seat: seats.append(seat), each['seats'])
-                category.put()  # Create categories for seat for a particular screen.
-            screen = res.get()  # Adding seats for the screen fetched from categories
-            screen.seats = seats
-            res = screen.put()
-            return jsonify({"code": 200, "id": res.id(), "message": "Success"})
-        except:
-            return jsonify({"code": 500, "message": "server error"})
->>>>>>> fa528020691c6da6c3efc3b4436f75b4a8481bee
 
 
 class ScreenUpdateView(MethodView):
