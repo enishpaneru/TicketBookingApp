@@ -46,9 +46,6 @@ class ScreenAddView(MethodView):
         res=screen.put()
                
         return jsonify({"code": 200, "id":res.id(),  "message": "Success"})
-        # except Exception as e:
-        print e
-        return jsonify({"code":500, "message":"server is error"})
 
 
 class ScreenUpdateView(MethodView):

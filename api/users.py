@@ -20,8 +20,6 @@ class UserRegisterView(MethodView):
         pass
 
     def post(self):
-        print '############################'
-        print request.json
         # Queries for initial Checks
         USER_EXIST_QUERY = User.query(User.username == request.json['username'])
         EMAIL_EXIST_QUERY = User.query(User.email == request.json['email'])
@@ -43,7 +41,7 @@ class UserRegisterView(MethodView):
         errors = map(lambda k: error_messages[k], filter(lambda k: pre_check[k], pre_check))
 
         if errors:
-            return jsonify({'status': 400, 'message': errors})
+            return jsonify({'status': "error", 'message': errors})
         else:
             # Add user credentials and minor info
             user = User()
@@ -70,9 +68,9 @@ class UserRegisterView(MethodView):
             res = user.put()
 
             if res:
-                return jsonify({'id': res.id(), 'message': "Username successfully registered."})
+                return jsonify({"status":"success",'id': res.id(), 'message': "Username successfully registered."})
             else:
-                return jsonify({'status': 500, 'message': "Error occured"})
+                return jsonify({'status': "error", 'message': "Error occured"})
 
 
 class UserLoginView(MethodView):
@@ -84,9 +82,9 @@ class UserLoginView(MethodView):
         if query:
             password_check = check_password_hash(query[0].password, request.json['password'])
             if password_check:
-                user_kind=query[0].type_id.get().name
+                user_kind = query[0].type_id.get().name
                 return jsonify({'id': query[0].username, 'token': create_user_token(query[0].key.id(), 86400),
-                                'message': "User has been successfully Logged in.","user_kind":user_kind})
+                                'message': "User has been successfully Logged in.", "user_kind": user_kind})
             else:
                 return jsonify({'id': query[0].username, 'message': "Password does not match."})
         else:

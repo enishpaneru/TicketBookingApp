@@ -22,13 +22,16 @@ class ClientRegisterView(MethodView):
     def post(self):
         print "hello"
         query = User.query(User.username == request.json['username']).fetch()
+
         if query:
             return jsonify({"status":409,'id': query[0].username, 'message': "Username Exists please use another username"})
         else:
 
             # check the association and validity of the client create account token
             client_id = self.check_client_token(request.headers)
-            if not client_id:
+            query_client = User.query(User.detail_id == ndb.Key(Client, client_id)).fetch()
+
+            if not client_id or query_client:
                 return jsonify(
                     {"status": 401,
                      'message': "Token validation gone wrong please request a new registration link from the admins"})
