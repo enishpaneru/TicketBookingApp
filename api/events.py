@@ -14,18 +14,29 @@ class ListEventView(MethodView):
         query = Event.query()
         events_list = []
         for each in query.fetch():
-            event_id = each.key.id()
-            name = each.name
-            description = each.description
-            client = each.client_id.get()
-            client_id = client.key.id()
-            client_name = client.name
-            events_list.append({'event_id': event_id, 'name': name, 'description': description, 'client_id': client_id,
-                                'client_name': client_name})
+            try:
+                event_id = each.key.id()
+                name = each.name
+                description = each.description
+                client = each.client_id.get()
+                client_id = client.key.id()
+                client_name = client.name
+                events_list.append(
+                    {'event_id': event_id, 'name': name, 'description': description, 'client_id': client_id,
+                     'client_name': client_name})
+            except Exception as e:
+                print e
+
         return jsonify(events_list)
 
 
 class EventDetailView(MethodView):
+    def check_validation(self, event_id):
+        try:
+            return int(event_id)
+        except:
+            return None
+
     def get(self, event_id):
         event_id = ndb.Key(Event, int(event_id))
         event = event_id.get()
@@ -103,7 +114,7 @@ class EventAddView(MethodView):
         print '###################'
         print request.is_json
         print request.json
-        user_id=request.environ['USER_ID']
+        user_id = request.environ['USER_ID']
         event.client_id = user_id.get().detail_id
         event.name = request.json['name']
         event.description = request.json['description']

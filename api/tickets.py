@@ -20,7 +20,7 @@ class ListTicketView(MethodView):
 
 
 class DetailTicketView(MethodView):
-    def get(self,ticket_id):
+    def get(self, ticket_id):
         ticket = ndb.Key(Ticket, int(ticket_id))
         show = ticket.show_id.get()
         event_name = show.event_id.get().name
