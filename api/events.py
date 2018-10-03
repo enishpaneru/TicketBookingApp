@@ -66,7 +66,8 @@ class DetailShowView(MethodView):
         show = ndb.Key(Show, show_id).get()
         show_screen = show.screen_id.get()
         screen_max_row_col = (show_screen.max_rows, show_screen.max_columns)
-        seats_price = {}
+        seats_price_category = {}
+   
         categories = Category.query(Category.screen_id == show.screen_id).fetch()
         for category in categories:
             price = Price.query(Price.show_id == show.key, Price.category_id == category.key).get()
@@ -75,7 +76,9 @@ class DetailShowView(MethodView):
             else:
                 price_amount = 0
             for seat in category.seats:
-                seats_price[(seat['row'], seat['column'])] = price_amount
+                seats_price_category[(seat['row'], seat['column'])] = {'price':price_amount, 'category':category.name}
+                
+
         seats_info = {}
         for seat, description in show.seats.iteritems():
             row, column = seat.split('-')
@@ -83,7 +86,7 @@ class DetailShowView(MethodView):
             column = int(column)
             # seat_detail = seat
             seats_info[seat] = {
-                'price': seats_price[(row, column)], 'status': description['status']}
+                'price': seats_price_category[(row, column)]['price'], 'status': description['status'], 'category': seats_price_category[(row, column)]['category']}
             # seat_detail['price'] = seats_price[(seat['row'], seat['column'])]
             # seats_info.append(seat_detail)
         print "now here"
