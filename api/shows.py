@@ -32,16 +32,17 @@ class ShowAddView(MethodView):
         show.seats = updated_seats
 
         categories_price = request.json['category-price']
+        res = show.put()
 
         # Creating a price for each request
         try:
             for each in categories_price:
-                price = Price(show_id=show.screen_id, category_id=ndb.Key('Category', int(each['category'])),
+                price = Price(show_id=res, category_id=ndb.Key('Category', int(each['category'])),
                               amount=int(each['price']))
                 print '########'
                 print type(price.category_id.id())
                 price.put()
-            res = show.put()
+            
         except:
             return jsonify({"code": 500, "message": "server error"})
 
